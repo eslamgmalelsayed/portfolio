@@ -24,6 +24,11 @@ cd portfolio
 
 2. Install dependencies:
 ```bash
+```
+
+### Demo
+Check out the live demo: [Portfolio Demo](https://eslamgmalelsayed-portfolio.netlify.app/)
+
 npm install
 ```
 
@@ -43,8 +48,7 @@ portfolio/
 │   ├── store/         # State management (if used)
 │   └── utils/         # Helper functions
 ├── public/            # Public static assets
-├── docs/             # Documentation
-└── tests/            # Test files
+├── Readme.md/             # Documentation
 ```
 
 ## Development Guide
