@@ -3,6 +3,7 @@ import { ref, watch, onMounted, onUnmounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import ThemeToggle from './components/ThemeToggle.vue';
 import Navigation from './components/Navigation.vue';
+import SeoManager from './components/SeoManager.vue';
 import { setLanguage } from './i18n';
 import { applyLanguage, initializePreferences } from './utils/preferences';
 
@@ -149,6 +150,7 @@ onUnmounted(() => {
       ></div>
     </template>
     
+    <SeoManager />
     <Navigation />
     
     <main class="container mx-auto px-4 py-8 min-h-[calc(100vh-12rem)] overflow-hidden">
