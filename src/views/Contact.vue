@@ -242,7 +242,7 @@ const handleSubmit = async () => {
   
   try {
     // Prepare form data for Netlify
-    const formData = new FormData();
+    const formData = new URLSearchParams();
     formData.append('form-name', 'contact');
     formData.append('name', name.value);
     formData.append('email', email.value);
@@ -253,7 +253,7 @@ const handleSubmit = async () => {
     const response = await fetch('/', {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: new URLSearchParams(formData).toString()
+      body: formData
     });
     
     if (response.ok) {
