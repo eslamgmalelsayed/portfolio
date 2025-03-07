@@ -170,7 +170,7 @@ onUnmounted(() => {
           
           <div class="flex">
             <a 
-              href="https://github.com" 
+              href="https://github.com/eslamgmalelsayed" 
               target="_blank" 
               rel="noopener noreferrer" 
               class="h-10 flex items-center px-4 text-gray-700 dark:text-[#a9b7c6] hover:text-black dark:hover:text-white transition-colors duration-200 relative border-r border-gray-200 dark:border-gray-700"
@@ -181,7 +181,7 @@ onUnmounted(() => {
               </svg>
             </a>
             <a 
-              href="https://linkedin.com" 
+              href="https://www.linkedin.com/in/eslamgamalelsayed/" 
               target="_blank" 
               rel="noopener noreferrer" 
               class="h-10 flex items-center px-4 text-gray-700 dark:text-[#a9b7c6] hover:text-black dark:hover:text-white transition-colors duration-200 relative"
@@ -333,6 +333,17 @@ onUnmounted(() => {
     opacity: 0;
     transform: translate(-50%, -50%) scale(0.3);
   }
+}
+
+/* Text selection styles */
+::selection {
+  background-color: rgba(203, 213, 225, 0.6); /* Light grey with opacity */
+  color: inherit;
+}
+
+.dark ::selection {
+  background-color: rgba(71, 85, 105, 0.6); /* Darker grey for dark mode */
+  color: inherit;
 }
 
 /* Reduced motion preferences */

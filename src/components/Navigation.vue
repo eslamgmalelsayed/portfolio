@@ -46,7 +46,7 @@ const navLinks = [
 const socialLinks = [
   { 
     name: 'GitHub', 
-    url: 'https://github.com/username', 
+    url: 'https://github.com/eslamgmalelsayed', 
     emoji: '💻'
   },
   { 
@@ -92,25 +92,27 @@ onUnmounted(() => {
         </div>
         
         <!-- Desktop Navigation - next to logo -->
-        <div class="hidden md:flex items-center h-full">
+        <div class="hidden md:flex items-center h-full" role="navigation">
           <router-link 
             v-for="link in navLinks" 
             :key="link.path" 
             :to="link.path"
             class="h-full flex items-center px-6 text-gray-700 dark:text-[#a9b7c6] hover:text-black dark:hover:text-white transition-colors duration-200 relative border-r border-gray-200 dark:border-gray-700"
             :class="{ 'active-link': isActiveRoute(link.name) }"
+            :aria-current="isActiveRoute(link.name) ? 'page' : undefined"
           >
           {{ link.label }}
-            <span class="ml-1 rtl:ml-1 rtl:mr-0 text-blue-500 dark:text-yellow-400">{{ link.emoji }}</span>
+            <span class="ml-1 rtl:ml-1 rtl:mr-0 text-blue-500 dark:text-yellow-400" aria-hidden="true">{{ link.emoji }}</span>
           </router-link>
         </div>
       </div>
         
       <!-- Theme, Language toggles and Mobile Menu Button -->
-      <div class="flex items-center space-x-4 rtl:space-x-reverse px-4 border-l border-gray-200 dark:border-gray-700 h-full">
-        <ThemeToggle />
+      <div class="flex items-center space-x-4 rtl:space-x-reverse px-4 h-full">
+        <ThemeToggle title="Toggle theme" />
         <button 
-          @click="toggleLanguage" 
+          @click="toggleLanguage"
+          title="Toggle language"
           class="px-3 py-1.5 text-sm rounded-md font-medium bg-gray-100 dark:bg-[#1d3b53] text-gray-700 dark:text-[#a9b7c6] border border-gray-300 dark:border-gray-600 hover:bg-gray-200 dark:hover:bg-[#2c5282] hover:text-black dark:hover:text-white transition-colors duration-200 focus:outline-none"
           aria-label="Toggle language"
         >
@@ -120,7 +122,7 @@ onUnmounted(() => {
         <!-- Mobile Menu Button - only visible on mobile -->
         <button 
           id="nav-toggle"
-          @click.stop="toggleMobileMenu" 
+          @click.stop="toggleMobileMenu"
           class="md:hidden focus:outline-none"
           aria-label="Toggle navigation menu"
         >
@@ -138,23 +140,26 @@ onUnmounted(() => {
     <div 
       v-if="isMobileMenuOpen" 
       class="md:hidden fixed inset-0 bg-white dark:bg-[#011627] z-50 flex flex-col"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Mobile navigation menu"
     >
       <div class="px-4 py-6 flex-1 flex flex-col">
         <!-- Close button at the top right -->
         <div class="flex justify-end mb-8">
           <button 
             @click.stop="closeMobileMenu"
-            class="focus:outline-none"
+            class="focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-md"
             aria-label="Close navigation menu"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-gray-700 dark:text-[#a9b7c6]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-gray-700 dark:text-[#a9b7c6]" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
         </div>
         
         <!-- Navigation Links - Centered -->
-        <div class="flex-1 flex flex-col justify-center items-center space-y-8">
+        <div class="flex-1 flex flex-col justify-center items-center space-y-8" role="navigation">
           <router-link 
             v-for="link in navLinks" 
             :key="link.path" 
@@ -162,8 +167,9 @@ onUnmounted(() => {
             class="text-2xl text-gray-700 dark:text-[#a9b7c6] hover:text-black dark:hover:text-white transition-colors duration-200 flex items-center"
             :class="{ 'text-black dark:text-white': isActiveRoute(link.name) }"
             @click.stop="closeMobileMenu"
+            :aria-current="isActiveRoute(link.name) ? 'page' : undefined"
           >
-            <span class="mr-2 rtl:ml-2 rtl:mr-0 text-blue-500 dark:text-yellow-400">{{ link.emoji }}</span>
+            <span class="mr-2 rtl:ml-2 rtl:mr-0 text-blue-500 dark:text-yellow-400" aria-hidden="true">{{ link.emoji }}</span>
             {{ link.label }}
           </router-link>
         </div>

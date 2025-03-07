@@ -74,8 +74,9 @@ watch(isDark, () => {
     @click="toggleDarkMode" 
     class="theme-toggle relative w-10 h-10 flex items-center justify-center rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 bg-gray-100 dark:bg-[#1d3b53] border border-gray-200 dark:border-gray-600"
     :aria-label="isDark ? t('message.theme') + ': ' + t('message.light') : t('message.theme') + ': ' + t('message.dark')"
+    :title="isDark ? t('message.theme') + ': ' + t('message.light') : t('message.theme') + ': ' + t('message.dark')"
   >
-    <div class="relative overflow-hidden w-6 h-6">
+    <div class="relative overflow-hidden w-6 h-6" aria-hidden="true">
       <!-- Sun icon -->
       <SunIcon 
         class="absolute inset-0 w-6 h-6 text-yellow-500 transition-transform duration-500 ease-in-out"

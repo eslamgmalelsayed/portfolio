@@ -136,6 +136,20 @@ onMounted(async () => {
 onUnmounted(() => {
   clearAllIntervals();
 });
+
+// Function to navigate to the previous skill
+const previousSkill = () => {
+  if (totalSkills.value > 1) {
+    activeSkillIndex.value = (activeSkillIndex.value - 1 + totalSkills.value) % totalSkills.value;
+  }
+};
+
+// Function to navigate to the next skill
+const nextSkill = () => {
+  if (totalSkills.value > 1) {
+    activeSkillIndex.value = (activeSkillIndex.value + 1) % totalSkills.value;
+  }
+};
 </script>
 
 <template>
@@ -152,17 +166,17 @@ onUnmounted(() => {
           <h1 class="text-6xl md:text-8xl font-bold mb-8 text-black dark:text-white font-mono break-words name-container min-h-[8rem]">
             {{ nameText }}
             <span class="cursor-container inline-block w-[1ch] h-[1em] align-middle relative">
-              <span v-if="showCursor && nameText.length === fullNameText.length" class="cursor absolute top-0 left-0">|</span>
+              <span v-show="showCursor && nameText.length === fullNameText.length" class="cursor absolute top-0 left-0">|</span>
             </span>
-            <span v-if="nameText.length === 0">&nbsp;</span>
+            <span v-show="nameText.length === 0">&nbsp;</span>
           </h1>
           
           <p class="text-2xl md:text-4xl text-blue-500 font-mono mb-10 role-container min-h-[4rem]">
             {{ roleText }}
             <span class="cursor-container inline-block w-[1ch] h-[1em] align-middle relative">
-              <span v-if="showCursor && roleText.length === fullRoleText.length && nameText.length === fullNameText.length" class="cursor absolute top-0 left-0">|</span>
+              <span v-show="showCursor && roleText.length === fullRoleText.length && nameText.length === fullNameText.length" class="cursor absolute top-0 left-0">|</span>
             </span>
-            <span v-if="roleText.length === 0">&nbsp;</span>
+            <span v-show="roleText.length === 0">&nbsp;</span>
           </p>
           
           <div class="font-mono text-lg md:text-2xl mt-10 min-h-[5rem]">
@@ -185,7 +199,7 @@ onUnmounted(() => {
               <div class="skills-display overflow-hidden relative rounded-lg bg-gray-200 dark:bg-gray-800 bg-opacity-30 dark:bg-opacity-30">
                 <div class="p-3">
                   <!-- Simple skill display with transition -->
-                  <div class="carousel-container relative overflow-hidden h-24">
+                  <div class="carousel-container relative overflow-hidden h-24" role="region" aria-label="Skills carousel">
                     <transition name="fade" mode="out-in">
                       <div 
                         :key="activeSkillIndex"
@@ -197,6 +211,8 @@ onUnmounted(() => {
                             backgroundColor: (currentSkill?.color || '#ffffff') + '20',
                             '--skill-color': currentSkill?.color || '#ffffff' 
                           }"
+                          role="group"
+                          :aria-label="currentSkill?.name || ''"
                         >
                           <img 
                             :src="currentSkill?.icon || ''" 
@@ -211,9 +227,27 @@ onUnmounted(() => {
                     </transition>
                   </div>
                   
-                  <div class="mt-3 text-gray-600 dark:text-gray-300 text-xs font-mono text-center">
+                  <div class="mt-3 text-gray-600 dark:text-gray-300 text-xs font-mono text-center" aria-live="polite">
                     <span class="text-green-600 dark:text-green-300">// </span>
                     <span>{{ t('home.skillCounter', { current: activeSkillIndex + 1, total: totalSkills }) }}</span>
+                  </div>
+                  
+                  <!-- Carousel controls for accessibility -->
+                  <div class="flex justify-center mt-2 space-x-2">
+                    <button 
+                      @click="previousSkill" 
+                      class="p-1 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-md"
+                      aria-label="Previous skill"
+                    >
+                      ⬅️
+                    </button>
+                    <button 
+                      @click="nextSkill" 
+                      class="p-1 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-md"
+                      aria-label="Next skill"
+                    >
+                      ➡️
+                    </button>
                   </div>
                 </div>
               </div>
@@ -258,11 +292,6 @@ onUnmounted(() => {
   transition: all 0.3s ease;
 }
 
-.skill-icon-wrapper:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-}
-
 .skill-icon-wrapper::before {
   content: '';
   position: absolute;
@@ -270,16 +299,19 @@ onUnmounted(() => {
   left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(45deg, transparent, rgba(var(--skill-color), 0.1), transparent);
+  background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.4), transparent);
   transform: translateX(-100%);
-  animation: shine 3s infinite;
+  animation: shine 2s infinite;
 }
 
 @keyframes shine {
   0% {
     transform: translateX(-100%);
   }
-  20%, 100% {
+  20% {
+    transform: translateX(100%);
+  }
+  100% {
     transform: translateX(100%);
   }
 }

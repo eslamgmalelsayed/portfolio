@@ -94,5 +94,41 @@ export default {
       typescript: 'TypeScript',
       vuetify: 'Vuetify'
     }
+  },
+  
+  // About page
+  about: {
+    title: 'About Me',
+    aboutMe: 'About Me',
+    description: 'Front-end developer with 4+ years of experience specializing in Vue and JavaScript, delivering scalable and high-performance web applications. Adept at solving complex technical challenges by analyzing and debugging issues, optimizing performance, and implementing innovative solutions. Expertise in creating reusable components, enhancing application performance, and integrating APIs in dynamic Single-Page Applications (SPAs). Skilled in collaborating with cross-functional teams to deliver user-centric solutions while adhering to tight deadlines.',
+    skills: 'Core Proficiencies',
+    education: {
+      title: 'Education',
+      degree: 'Bachelor\'s Degree in Management Information Systems',
+      university: 'Delta Higher Institute, Egypt',
+      date: '2018 - 2022',
+      description: 'Bachelor\'s degree with focus on web development'
+    },
+    course: 'Route Frontend Course',
+    courseDescription: 'Comprehensive training in front-end web development technologies',
+    courseDate: '2020',
+    experience: 'Experience',
+    job1Title: 'Front-End Developer (Vue.js)',
+    job1Company: 'Ministry Of Justice, Riyadh, Saudi Arabia',
+    job1Date: 'July 2022 - Present',
+    job1Bullet1: 'Developing and maintaining Angular-based applications with a focus on performance and scalability',
+    job1Bullet2: 'Solving technical challenges by debugging and optimizing code',
+    job1Bullet3: 'Implementing complex business logic and reusable components using Vue.js and TypeScript',
+    job1Bullet4: 'Collaborating with back-end teams to integrate RESTful APIs seamlessly',
+    job2Title: 'Front-End Developer (Freelancer)',
+    job2Company: 'Freelance',
+    job2Date: 'July 2020 - 2022',
+    job2Bullet1: 'Contributed to multiple projects by developing responsive and scalable front-end solutions',
+    job2Bullet2: 'Delivered consistent UI/UX designs adhering to project requirements',
+    job2Bullet3: 'Coordinated closely with team members to deliver high-quality applications on tight deadlines',
+    job3Title: 'Front-End Developer (Trainee)',
+    job3Company: 'Brainnest, Germany',
+    job3Date: '2020',
+    job3Bullet1: 'Focused on advanced JavaScript concepts and CSS techniques, completing required tasks during the program'
   }
 }
