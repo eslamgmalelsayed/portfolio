@@ -2,7 +2,7 @@
 
 A modern, responsive portfolio website built with Vue.js, featuring dark/light mode, multilingual support (English and Arabic), and a playful UI with emoji icons.
 
-![Portfolio Preview](./public/portfolio-preview.png)
+![Portfolio Preview](https://eslamgmalelsayed.com)
 
 ## 🚀 Features
 
@@ -112,5 +112,5 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 ## 👨‍💻 Author
 
 **Eslam Gamal**
-- Website: [eslamgamal.com](https://eslamgamal.com)
+- Website: [eslamgamal.com](https://github.com/eslamgmalelsayed)
 - GitHub: [@eslamgmalelsayed](https://github.com/eslamgmalelsayed)
