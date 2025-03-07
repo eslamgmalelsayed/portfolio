@@ -71,6 +71,17 @@
         </div>
         
         <div class="md:w-2/3">
+          <form name="contact" netlify>
+            <p>
+              <label>Name <input type="text" name="name" /></label>
+            </p>
+            <p>
+              <label>Email <input type="email" name="email" /></label>
+            </p>
+            <p>
+              <button type="submit">Send</button>
+            </p>
+          </form>
           <form class="space-y-6" netlify>
             <div>
               <label for="name" class="block text-sm font-medium text-black dark:text-white mb-1">
