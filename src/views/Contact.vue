@@ -71,7 +71,7 @@
         </div>
         
         <div class="md:w-2/3">
-          <form @submit.prevent class="space-y-6" netlify>
+          <form class="space-y-6" netlify>
             <div>
               <label for="name" class="block text-sm font-medium text-black dark:text-white mb-1">
                 {{ t('message.name') || 'Name' }} <span class="text-red-500">*</span>
