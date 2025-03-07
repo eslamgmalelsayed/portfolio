@@ -71,15 +71,7 @@
         </div>
         
         <div class="md:w-2/3">
-          <form @submit.prevent="handleSubmit" class="space-y-6" netlify>
-            <div v-if="submitSuccess" class="bg-white dark:bg-green-800 bg-opacity-100 dark:bg-opacity-30 text-green-700 dark:text-green-400 p-4 rounded-md mb-6 border border-green-200 dark:border-transparent">
-              {{ t('message.messageSent') || 'Your message has been sent successfully!' }}
-            </div>
-            
-            <div v-if="submitError" class="bg-white dark:bg-red-800 bg-opacity-100 dark:bg-opacity-30 text-red-700 dark:text-red-400 p-4 rounded-md mb-6 border border-red-200 dark:border-transparent">
-              {{ submitError }}
-            </div>
-            
+          <form @submit.prevent class="space-y-6" netlify>
             <div>
               <label for="name" class="block text-sm font-medium text-black dark:text-white mb-1">
                 {{ t('message.name') || 'Name' }} <span class="text-red-500">*</span>
@@ -91,7 +83,6 @@
                 class="bg-white dark:bg-gray-800 bg-opacity-100 dark:bg-opacity-30 text-black dark:text-white placeholder-gray-500 dark:placeholder-gray-400 w-full px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 border border-gray-200 dark:border-transparent"
                 :placeholder="t('message.yourName') || 'Your name'"
               />
-              <p v-if="errors.name" class="mt-1 text-sm text-red-500">{{ errors.name }}</p>
             </div>
             
             <div>
@@ -105,7 +96,6 @@
                 class="bg-white dark:bg-gray-800 bg-opacity-100 dark:bg-opacity-30 text-black dark:text-white placeholder-gray-500 dark:placeholder-gray-400 w-full px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 border border-gray-200 dark:border-transparent"
                 :placeholder="t('message.yourEmail') || 'Your email'"
               />
-              <p v-if="errors.email" class="mt-1 text-sm text-red-500">{{ errors.email }}</p>
             </div>
             
             <div>
@@ -119,7 +109,6 @@
                 class="bg-white dark:bg-gray-800 bg-opacity-100 dark:bg-opacity-30 text-black dark:text-white placeholder-gray-500 dark:placeholder-gray-400 w-full px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 border border-gray-200 dark:border-transparent"
                 :placeholder="t('message.messageSubject') || 'Message subject'"
               />
-              <p v-if="errors.subject" class="mt-1 text-sm text-red-500">{{ errors.subject }}</p>
             </div>
             
             <div>
@@ -133,20 +122,14 @@
                 class="bg-white dark:bg-gray-800 bg-opacity-100 dark:bg-opacity-30 text-black dark:text-white placeholder-gray-500 dark:placeholder-gray-400 w-full px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 border border-gray-200 dark:border-transparent"
                 :placeholder="t('message.yourMessage') || 'Your message'"
               ></textarea>
-              <p v-if="errors.message" class="mt-1 text-sm text-red-500">{{ errors.message }}</p>
             </div>
             
             <div>
               <button 
                 type="submit" 
                 class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200 flex items-center justify-center"
-                :disabled="isSubmitting"
               >
-                <svg v-if="isSubmitting" class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-                {{ isSubmitting ? (t('message.sending') || 'Sending...') : (t('message.send') || 'Send Message') }}
+                {{ (t('message.send') || 'Send Message') }}
               </button>
             </div>
           </form>
