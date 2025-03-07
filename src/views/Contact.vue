@@ -80,6 +80,7 @@
                 type="text" 
                 id="name" 
                 v-model="formData.name" 
+                name="name"
                 class="bg-white dark:bg-gray-800 bg-opacity-100 dark:bg-opacity-30 text-black dark:text-white placeholder-gray-500 dark:placeholder-gray-400 w-full px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 border border-gray-200 dark:border-transparent"
                 :placeholder="t('message.yourName') || 'Your name'"
               />
@@ -93,6 +94,7 @@
                 type="email" 
                 id="email" 
                 v-model="formData.email" 
+                name="email"
                 class="bg-white dark:bg-gray-800 bg-opacity-100 dark:bg-opacity-30 text-black dark:text-white placeholder-gray-500 dark:placeholder-gray-400 w-full px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 border border-gray-200 dark:border-transparent"
                 :placeholder="t('message.yourEmail') || 'Your email'"
               />
@@ -106,6 +108,7 @@
                 type="text" 
                 id="subject" 
                 v-model="formData.subject" 
+                name="subject"
                 class="bg-white dark:bg-gray-800 bg-opacity-100 dark:bg-opacity-30 text-black dark:text-white placeholder-gray-500 dark:placeholder-gray-400 w-full px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 border border-gray-200 dark:border-transparent"
                 :placeholder="t('message.messageSubject') || 'Message subject'"
               />
@@ -118,8 +121,9 @@
               <textarea 
                 id="message" 
                 v-model="formData.message" 
+                name="message"
                 rows="5" 
-                class="bg-white dark:bg-gray-800 bg-opacity-100 dark:bg-opacity-30 text-black dark:text-white placeholder-gray-500 dark:placeholder-gray-400 w-full px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 border border-gray-200 dark:border-transparent"
+                class="bg-white resize-none dark:bg-gray-800 bg-opacity-100 dark:bg-opacity-30 text-black dark:text-white placeholder-gray-500 dark:placeholder-gray-400 w-full px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 border border-gray-200 dark:border-transparent"
                 :placeholder="t('message.yourMessage') || 'Your message'"
               ></textarea>
             </div>
