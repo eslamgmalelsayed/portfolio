@@ -71,7 +71,21 @@
         </div>
         
         <div class="md:w-2/3">
-          <form @submit.prevent="handleSubmit" class="space-y-6">
+          <form 
+            @submit.prevent="handleSubmit" 
+            class="space-y-6" 
+            name="contact"
+            method="POST"
+            data-netlify="true"
+            netlify-honeypot="bot-field"
+          >
+            <input type="hidden" name="form-name" value="contact" />
+            <div class="hidden">
+              <label>
+                Don't fill this out if you're human: <input name="bot-field" />
+              </label>
+            </div>
+            
             <div v-if="submitSuccess" class="bg-white dark:bg-green-800 bg-opacity-100 dark:bg-opacity-30 text-green-700 dark:text-green-400 p-4 rounded-md mb-6 border border-green-200 dark:border-transparent">
               {{ t('message.messageSent') || 'Your message has been sent successfully!' }}
             </div>
@@ -87,11 +101,11 @@
               <input 
                 type="text" 
                 id="name" 
-                v-model="formData.name" 
+                v-model="name" 
                 class="bg-white dark:bg-gray-800 bg-opacity-100 dark:bg-opacity-30 text-black dark:text-white placeholder-gray-500 dark:placeholder-gray-400 w-full px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 border border-gray-200 dark:border-transparent"
                 :placeholder="t('message.yourName') || 'Your name'"
               />
-              <p v-if="errors.name" class="mt-1 text-sm text-red-500">{{ errors.name }}</p>
+              <p v-if="nameError" class="mt-1 text-sm text-red-500">{{ nameError }}</p>
             </div>
             
             <div>
@@ -101,11 +115,11 @@
               <input 
                 type="email" 
                 id="email" 
-                v-model="formData.email" 
+                v-model="email" 
                 class="bg-white dark:bg-gray-800 bg-opacity-100 dark:bg-opacity-30 text-black dark:text-white placeholder-gray-500 dark:placeholder-gray-400 w-full px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 border border-gray-200 dark:border-transparent"
                 :placeholder="t('message.yourEmail') || 'Your email'"
               />
-              <p v-if="errors.email" class="mt-1 text-sm text-red-500">{{ errors.email }}</p>
+              <p v-if="emailError" class="mt-1 text-sm text-red-500">{{ emailError }}</p>
             </div>
             
             <div>
@@ -115,11 +129,11 @@
               <input 
                 type="text" 
                 id="subject" 
-                v-model="formData.subject" 
+                v-model="subject" 
                 class="bg-white dark:bg-gray-800 bg-opacity-100 dark:bg-opacity-30 text-black dark:text-white placeholder-gray-500 dark:placeholder-gray-400 w-full px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 border border-gray-200 dark:border-transparent"
                 :placeholder="t('message.messageSubject') || 'Message subject'"
               />
-              <p v-if="errors.subject" class="mt-1 text-sm text-red-500">{{ errors.subject }}</p>
+              <p v-if="subjectError" class="mt-1 text-sm text-red-500">{{ subjectError }}</p>
             </div>
             
             <div>
@@ -128,12 +142,12 @@
               </label>
               <textarea 
                 id="message" 
-                v-model="formData.message" 
+                v-model="message" 
                 rows="5" 
                 class="bg-white dark:bg-gray-800 bg-opacity-100 dark:bg-opacity-30 text-black dark:text-white placeholder-gray-500 dark:placeholder-gray-400 w-full px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 border border-gray-200 dark:border-transparent"
                 :placeholder="t('message.yourMessage') || 'Your message'"
               ></textarea>
-              <p v-if="errors.message" class="mt-1 text-sm text-red-500">{{ errors.message }}</p>
+              <p v-if="messageError" class="mt-1 text-sm text-red-500">{{ messageError }}</p>
             </div>
             
             <div>
@@ -162,88 +176,99 @@ import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
 
-const formData = ref({
-  name: '',
-  email: '',
-  subject: '',
-  message: ''
-});
+// Form data
+const name = ref('');
+const email = ref('');
+const subject = ref('');
+const message = ref('');
 
-const errors = ref({
-  name: '',
-  email: '',
-  subject: '',
-  message: ''
-});
-
+// Form state
 const isSubmitting = ref(false);
 const submitSuccess = ref(false);
-const submitError = ref('');
+const submitError = ref(false);
 
-const validateEmail = (email: string) => {
-  const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-  return re.test(String(email).toLowerCase());
-};
+// Form validation
+const nameError = ref('');
+const emailError = ref('');
+const subjectError = ref('');
+const messageError = ref('');
 
+// Validate form
 const validateForm = () => {
   let isValid = true;
-  errors.value = {
-    name: '',
-    email: '',
-    subject: '',
-    message: ''
-  };
-
-  if (!formData.value.name.trim()) {
-    errors.value.name = t('message.nameRequired') || 'Name is required';
+  
+  // Reset errors
+  nameError.value = '';
+  emailError.value = '';
+  subjectError.value = '';
+  messageError.value = '';
+  
+  // Validate name
+  if (!name.value.trim()) {
+    nameError.value = t('message.nameRequired') || 'Name is required';
     isValid = false;
   }
-
-  if (!formData.value.email.trim()) {
-    errors.value.email = t('message.emailRequired') || 'Email is required';
+  
+  // Validate email
+  if (!email.value.trim()) {
+    emailError.value = t('message.emailRequired') || 'Email is required';
     isValid = false;
-  } else if (!validateEmail(formData.value.email)) {
-    errors.value.email = t('message.emailInvalid') || 'Please enter a valid email address';
-    isValid = false;
-  }
-
-  if (!formData.value.subject.trim()) {
-    errors.value.subject = t('message.subjectRequired') || 'Subject is required';
+  } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value.trim())) {
+    emailError.value = t('message.emailInvalid') || 'Please enter a valid email address';
     isValid = false;
   }
-
-  if (!formData.value.message.trim()) {
-    errors.value.message = t('message.messageRequired') || 'Message is required';
+  
+  // Validate subject
+  if (!subject.value.trim()) {
+    subjectError.value = t('message.subjectRequired') || 'Subject is required';
     isValid = false;
   }
-
+  
+  // Validate message
+  if (!message.value.trim()) {
+    messageError.value = t('message.messageRequired') || 'Message is required';
+    isValid = false;
+  }
+  
   return isValid;
 };
 
+// Handle form submission
 const handleSubmit = async () => {
-  if (!validateForm()) {
-    return;
-  }
-
+  if (!validateForm()) return;
+  
   isSubmitting.value = true;
-  submitSuccess.value = false;
-  submitError.value = '';
-
+  submitError.value = false;
+  
   try {
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    // Prepare form data for Netlify
+    const formData = new FormData();
+    formData.append('form-name', 'contact');
+    formData.append('name', name.value);
+    formData.append('email', email.value);
+    formData.append('subject', subject.value);
+    formData.append('message', message.value);
     
-    // Reset form on success
-    formData.value = {
-      name: '',
-      email: '',
-      subject: '',
-      message: ''
-    };
+    // Send form data to Netlify
+    const response = await fetch('/', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams(formData).toString()
+    });
     
-    submitSuccess.value = true;
+    if (response.ok) {
+      submitSuccess.value = true;
+      // Reset form
+      name.value = '';
+      email.value = '';
+      subject.value = '';
+      message.value = '';
+    } else {
+      throw new Error('Form submission failed');
+    }
   } catch (error) {
-    submitError.value = t('message.submitError') || 'An error occurred. Please try again.';
+    console.error('Error submitting form:', error);
+    submitError.value = true;
   } finally {
     isSubmitting.value = false;
   }
@@ -251,8 +276,6 @@ const handleSubmit = async () => {
 </script>
 
 <style scoped>
-
-
 :root.dark .code-block {
   background-color: #011627;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
