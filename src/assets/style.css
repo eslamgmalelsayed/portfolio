@@ -1,0 +1,80 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom base styles */
+@layer base {
+  body {
+    @apply bg-light-bg text-light-text-primary transition-colors duration-200 ease-in-out;
+  }
+
+  .dark body {
+    @apply bg-dark-bg text-dark-text-primary;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-heading;
+  }
+
+  h1 {
+    @apply text-3xl md:text-4xl font-bold;
+  }
+
+  h2 {
+    @apply text-2xl md:text-3xl font-semibold;
+  }
+
+  a {
+    @apply text-primary hover:text-primary-dark transition-colors;
+  }
+
+  .dark a {
+    @apply text-[#a9b7c6] hover:text-white;
+  }
+}
+
+/* Custom component styles */
+@layer components {
+  .btn {
+    @apply px-4 py-2 rounded-md font-medium transition-colors;
+  }
+
+  .btn-primary {
+    @apply bg-primary text-white hover:bg-primary-dark;
+  }
+
+  .btn-secondary {
+    @apply bg-secondary text-white hover:bg-secondary-dark;
+  }
+
+  .card {
+    @apply bg-light-surface p-6 rounded-lg shadow-custom border border-light-border;
+  }
+
+  .dark .card {
+    @apply bg-dark-surface shadow-custom-dark border-dark-border;
+  }
+
+  .nav-link {
+    @apply px-3 py-2 rounded-md text-light-text-secondary hover:text-light-text-primary hover:bg-light-surface;
+  }
+
+  .dark .nav-link {
+    @apply text-dark-text-secondary hover:text-dark-text-primary hover:bg-dark-surface;
+  }
+
+  .nav-link.active {
+    @apply bg-light-surface text-primary font-medium;
+  }
+
+  .dark .nav-link.active {
+    @apply bg-dark-surface text-primary-light;
+  }
+}
+
+/* Custom utilities */
+@layer utilities {
+  .rtl-flip {
+    @apply rtl:rotate-180;
+  }
+}
