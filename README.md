@@ -2,7 +2,9 @@
 
 A modern, responsive portfolio website built with Vue.js, featuring dark/light mode, multilingual support (English and Arabic), and a playful UI with emoji icons.
 
-![Portfolio Preview](https://eslamgmalelsayed.com)
+## 🚀 Demo
+
+[https://eslamgmalelsayed.com](https://eslamgmalelsayed.com)
 
 ## 🚀 Features
 
