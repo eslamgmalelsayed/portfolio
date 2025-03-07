@@ -15,7 +15,7 @@
             <input 
               type="text" 
               v-model="searchQuery" 
-              class="bg-gray-800 bg-opacity-30 text-white placeholder-gray-400 w-full pl-10 pr-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              class="bg-white dark:bg-gray-800 bg-opacity-100 dark:bg-opacity-30 text-black dark:text-white placeholder-gray-500 dark:placeholder-gray-400 w-full pl-10 pr-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 border border-gray-200 dark:border-transparent"
               :placeholder="t('message.searchProjects') || 'Search projects...'"
             >
           </div>
@@ -33,12 +33,12 @@
             
             <div class="relative z-10" style="transform: translateZ(20px)">
               <!-- Project Image -->
-              <div class="bg-gray-100 dark:bg-gray-800 h-48 rounded-t-lg flex items-center justify-center overflow-hidden">
-                <span class="text-gray-500 dark:text-gray-400">{{ project.title }} Image</span>
+              <div class="bg-gradient-to-r from-blue-100 to-purple-100 dark:from-blue-800 dark:via-indigo-900 dark:to-purple-900 h-48 rounded-t-lg flex items-center justify-center overflow-hidden">
+                <span class="text-6xl">{{ getProjectEmoji(project.category) }}</span>
               </div>
               
               <!-- Project Content -->
-              <div class="p-6 bg-white dark:bg-gray-800 rounded-b-lg border-t border-gray-100 dark:border-gray-700">
+              <div class="p-6 bg-white dark:bg-gradient-to-br dark:from-gray-800 dark:to-gray-900 dark:bg-opacity-90 backdrop-blur-sm rounded-b-lg border-t border-gray-100 dark:border-gray-700">
                 <h3 class="text-xl font-semibold mb-2 text-black dark:text-white">{{ project.title }}</h3>
                 <p class="text-gray-600 dark:text-gray-400 mb-4 text-sm">{{ project.description }}</p>
                 
@@ -123,26 +123,6 @@ const projects = ref([
     link: '#',
     github: '#'
   },
-  {
-    id: 4,
-    title: 'Portfolio Website',
-    description: 'A personal portfolio website built with Vue.js and Tailwind CSS.',
-    image: '/placeholder.jpg',
-    technologies: ['Vue.js', 'TypeScript', 'Tailwind CSS'],
-    category: 'web',
-    link: '#',
-    github: '#'
-  },
-  {
-    id: 5,
-    title: 'Mobile Chat App',
-    description: 'A real-time chat application for mobile devices.',
-    image: '/placeholder.jpg',
-    technologies: ['Vue.js', 'Socket.io', 'Express'],
-    category: 'mobile',
-    link: '#',
-    github: '#'
-  }
 ]);
 
 const searchQuery = ref('');
@@ -237,6 +217,19 @@ function updateCardShadow(cardElement: HTMLElement, percentX: number, percentY: 
   `;
 }
 
+function getProjectEmoji(category: string) {
+  const emojiMap: {[key: string]: string} = {
+    'web': '🌐',
+    'mobile': '📱',
+    'desktop': '💻',
+    'game': '🎮',
+    'ai': '🤖',
+    'data': '📊'
+  };
+  
+  return emojiMap[category] || '🚀';
+};
+
 onMounted(() => {
   // Add event listeners after DOM is fully rendered
   setTimeout(() => {
@@ -280,11 +273,46 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
-
-
 :root.dark .code-block {
   background-color: #011627;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+/* Enhanced card styles for dark mode */
+:root.dark .project-card {
+  box-shadow: 0 4px 20px rgba(0, 30, 60, 0.3);
+  transition: all 0.3s ease;
+  background: linear-gradient(135deg, rgba(30, 41, 59, 0.8), rgba(15, 23, 42, 0.9));
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+:root.dark .project-card:hover {
+  box-shadow: 0 8px 30px rgba(59, 130, 246, 0.2);
+  transform: translateY(-5px);
+}
+
+/* Emoji glow effect in dark mode */
+:root.dark .project-card span.text-6xl {
+  filter: drop-shadow(0 0 8px rgba(147, 197, 253, 0.5));
+}
+
+/* Subtle glow effect on hover in dark mode */
+@keyframes subtle-glow {
+  0% { box-shadow: 0 4px 20px rgba(59, 130, 246, 0.1); }
+  50% { box-shadow: 0 4px 25px rgba(59, 130, 246, 0.2); }
+  100% { box-shadow: 0 4px 20px rgba(59, 130, 246, 0.1); }
+}
+
+:root.dark .project-card:hover {
+  animation: subtle-glow 2s infinite ease-in-out;
+}
+
+/* Technology tags in dark mode */
+:root.dark .project-card .bg-gray-700 {
+  background-color: rgba(51, 65, 85, 0.6);
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(71, 85, 105, 0.4);
 }
 
 .project-card {

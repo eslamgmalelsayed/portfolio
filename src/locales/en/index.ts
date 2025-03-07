@@ -70,6 +70,9 @@ export default {
     subjectRequired: 'Subject is required',
     messageRequired: 'Message is required',
     submitError: 'An error occurred. Please try again.',
+    nameMinLength: 'Name must be at least 2 characters',
+    subjectMinLength: 'Subject must be at least 3 characters',
+    messageMinLength: 'Message must be at least 10 characters',
     
     // 404 page
     pageNotFound: 'Page Not Found',

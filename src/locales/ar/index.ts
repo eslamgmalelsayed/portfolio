@@ -69,6 +69,9 @@ export default {
     emailInvalid: 'يرجى إدخال عنوان بريد إلكتروني صالح',
     subjectRequired: 'الموضوع مطلوب',
     messageRequired: 'الرسالة مطلوبة',
+    nameMinLength: 'يجب أن يتكون الاسم من حرفين على الأقل',
+    subjectMinLength: 'يجب أن يتكون الموضوع من 3 أحرف على الأقل',
+    messageMinLength: 'يجب أن تتكون الرسالة من 10 أحرف على الأقل',
     submitError: 'حدث خطأ. يرجى المحاولة مرة أخرى.',
     
     // 404 page
