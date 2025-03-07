@@ -235,7 +235,8 @@ const nextSkill = () => {
                   <!-- Carousel controls for accessibility -->
                   <div class="flex justify-center mt-2 space-x-2">
                     <button 
-                      @click="previousSkill" 
+                      @click="previousSkill"
+                      title="Previous skill" 
                       class="p-1 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-md"
                       aria-label="Previous skill"
                     >
@@ -243,6 +244,7 @@ const nextSkill = () => {
                     </button>
                     <button 
                       @click="nextSkill" 
+                      title="Next skill" 
                       class="p-1 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-md"
                       aria-label="Next skill"
                     >

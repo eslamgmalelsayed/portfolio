@@ -130,5 +130,23 @@ export default {
       typescript: 'تايبسكريبت',
       vuetify: 'فيوتيفاي'
     }
+  },
+
+  // ترجمات القائمة
+  nav: {
+    home: 'مرحباً',
+    about: 'نبذة عني',
+    skills: 'المهارات',
+    projects: 'المشاريع',
+    contact: 'اتصل بي'
+  },
+
+  // ترجمات التذييل
+  footer: {
+    copyright: 'جميع الحقوق محفوظة',
+    language: 'اللغة',
+    github: 'جيثب',
+    linkedin: 'لينكد إن',
+    findMeIn: 'تجدني في'
   }
 }

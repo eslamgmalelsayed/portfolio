@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n';
-import { ref, onMounted, watch, computed } from 'vue';
+import { ref, onMounted, onBeforeUnmount } from 'vue';
 
 // Add TypeScript declaration for window.planeInterval
 declare global {
@@ -16,31 +16,23 @@ const planePosition = ref(0);
 const experiencePositions = ref<number[]>([]);
 const currentPlaneIndex = ref(0);
 
-// Initialize the experience positions and start the plane animation
-onMounted(() => {
-  // Wait for the DOM to be fully rendered
-  setTimeout(() => {
-    updatePlanePositions();
-    
-    // Add window resize listener to update positions when window size changes
-    window.addEventListener('resize', updatePlanePositions);
-    
-    // Start the plane animation
-    startPlaneAnimation();
-  }, 500);
-});
-
 // Update plane positions based on current DOM
 const updatePlanePositions = () => {
-  const timelineNodes = document.querySelectorAll('.timeline-node');
+  // Specifically target the timeline emoji containers
+  const timelineNodes = document.querySelectorAll('.experience-item .timeline-node');
   const positions: number[] = [];
   
-  timelineNodes.forEach((item) => {
+  timelineNodes.forEach((item, index) => {
     const rect = item.getBoundingClientRect();
-    positions.push(rect.top + window.scrollY);
+    // Get the center position of each timeline node
+    const position = rect.top + window.scrollY + rect.height / 2 - 12;
+    positions.push(position);
   });
   
-  experiencePositions.value = positions;
+  // Only update positions if we found timeline nodes
+  if (positions.length > 0) {
+    experiencePositions.value = positions;
+  }
   
   // Set initial position
   if (positions.length > 0) {
@@ -56,7 +48,10 @@ const startPlaneAnimation = () => {
     clearInterval(window.planeInterval);
   }
   
-  // Set initial position
+  // Force update positions to ensure we have the latest
+  updatePlanePositions();
+  
+  // Set initial position to the first node
   if (experiencePositions.value.length > 0) {
     planePosition.value = experiencePositions.value[0];
     currentPlaneIndex.value = 0;
@@ -64,17 +59,60 @@ const startPlaneAnimation = () => {
   
   // Create a new interval to move the plane every 3 seconds
   window.planeInterval = setInterval(() => {
+    // Make sure we have valid positions
+    if (experiencePositions.value.length === 0) {
+      updatePlanePositions();
+      return;
+    }
+    
     // Move to the next position
     currentPlaneIndex.value = (currentPlaneIndex.value + 1) % experiencePositions.value.length;
-    planePosition.value = experiencePositions.value[currentPlaneIndex.value];
+    
+    // If we've reached the end, reset to the beginning after a pause
+    if (currentPlaneIndex.value === 0) {
+      // We're at the beginning of a new cycle
+      setTimeout(() => {
+        // Update the plane position to the first node
+        planePosition.value = experiencePositions.value[0];
+      }, 1000); // 1 second pause before restarting
+    } else {
+      // Update the plane position immediately
+      planePosition.value = experiencePositions.value[currentPlaneIndex.value];
+    }
   }, 3000);
 };
 
+// Initialize the experience positions and start the plane animation
 onMounted(() => {
-  // Add scroll event listener to update plane positions when scrolling
-  window.addEventListener('scroll', () => {
+  // Clear any existing interval first
+  if (window.planeInterval) {
+    clearInterval(window.planeInterval);
+  }
+  
+  // Wait for the DOM to be fully rendered
+  setTimeout(() => {
     updatePlanePositions();
-  });
+    
+    // Add window resize listener to update positions when window size changes
+    window.addEventListener('resize', updatePlanePositions);
+    
+    // Add scroll event listener to update plane positions when scrolling
+    window.addEventListener('scroll', updatePlanePositions);
+    
+    // Start the plane animation with a delay to ensure DOM is ready
+    setTimeout(() => {
+      startPlaneAnimation();
+    }, 1000);
+  }, 500);
+});
+
+// Clean up when component is unmounted
+onBeforeUnmount(() => {
+  if (window.planeInterval) {
+    clearInterval(window.planeInterval);
+  }
+  window.removeEventListener('resize', updatePlanePositions);
+  window.removeEventListener('scroll', updatePlanePositions);
 });
 </script>
 
@@ -498,12 +536,13 @@ onMounted(() => {
   font-size: 1.5rem;
   filter: drop-shadow(0 0 8px rgba(99, 102, 241, 0.7));
   animation: glow 2s infinite alternate;
-  transition: top 0.5s ease;
+  transition: top 0.5s ease-in-out;
   z-index: 30;
+  transform: translateY(-50%); /* Center vertically relative to its position */
 }
 
 .rtl-plane .plane-emoji {
-  transform: scaleX(-1);
+  transform: scaleX(-1) translateY(-50%); /* Maintain vertical centering while flipping horizontally */
 }
 
 :root.dark .plane-emoji {

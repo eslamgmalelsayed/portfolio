@@ -130,5 +130,23 @@ export default {
     job3Company: 'Brainnest, Germany',
     job3Date: '2020',
     job3Bullet1: 'Focused on advanced JavaScript concepts and CSS techniques, completing required tasks during the program'
+  },
+  
+  // Navigation translations
+  nav: {
+    home: 'Hi',
+    about: 'About',
+    skills: 'Skills',
+    projects: 'Projects',
+    contact: 'Contact'
+  },
+
+  // Footer translations
+  footer: {
+    copyright: 'all rights reserved',
+    language: 'Language',
+    github: 'GitHub',
+    linkedin: 'LinkedIn',
+    findMeIn: 'find me in'
   }
 }
