@@ -111,6 +111,19 @@ onMounted(() => {
             {{ t('about.description') }}
           </div>
           
+          <!-- CV Download Button -->
+          <div class="mb-8">
+            <a 
+              href="https://drive.google.com/file/d/1sQR8DwhO1li835HVyIMKljI4Zi2nKAa6/view?usp=drive_link" 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              class="inline-flex items-center px-6 py-3 bg-violet-600 dark:bg-blue-600 text-white font-medium rounded-lg shadow-md hover:bg-violet-700 dark:hover:bg-blue-700 transition-colors duration-200 transform hover:-translate-y-1"
+            >
+              <span class="mr-2 text-xl" role="img" aria-label="Document">📄</span>
+              {{ t('about.downloadCV') }}
+            </a>
+          </div>
+          
           <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-8">
             <!-- Education Section -->
             <div class="mb-12">

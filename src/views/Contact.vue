@@ -23,6 +23,16 @@
             
             <div class="flex items-start">
               <div class="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center mr-4">
+                <span class="text-xl">📱</span>
+              </div>
+              <div>
+                <h3 class="text-lg font-medium text-black dark:text-white">{{ t('message.phone') || 'Phone' }}</h3>
+                <p class="text-gray-400">+966570359187</p>
+              </div>
+            </div>
+            
+            <div class="flex items-start">
+              <div class="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center mr-4">
                 <span class="text-xl">📍</span>
               </div>
               <div>

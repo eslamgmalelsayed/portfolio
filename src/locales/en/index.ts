@@ -45,6 +45,7 @@ export default {
     contactForm: 'Contact Form',
     getInTouch: 'Get in Touch',
     email: 'Email',
+    phone: 'Phone',
     location: 'Location',
     socialMedia: 'Social Media',
     social: 'Social',
@@ -102,6 +103,7 @@ export default {
     aboutMe: 'About Me',
     description: 'Front-end developer with 4+ years of experience specializing in Vue and JavaScript, delivering scalable and high-performance web applications. Adept at solving complex technical challenges by analyzing and debugging issues, optimizing performance, and implementing innovative solutions. Expertise in creating reusable components, enhancing application performance, and integrating APIs in dynamic Single-Page Applications (SPAs). Skilled in collaborating with cross-functional teams to deliver user-centric solutions while adhering to tight deadlines.',
     skills: 'Core Proficiencies',
+    downloadCV: 'Download CV',
     education: {
       title: 'Education',
       degree: 'Bachelor\'s Degree in Management Information Systems',
