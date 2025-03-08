@@ -52,11 +52,28 @@ const currentSkill = computed(() => {
 // Store interval IDs for cleanup
 const intervals = ref<number[]>([]);
 
+// Responsive typing speeds based on screen size
+const getTypingSpeed = (baseSpeed: number) => {
+  // Check if we're on mobile
+  const isMobile = window.matchMedia('(max-width: 768px)').matches;
+  const isTablet = window.matchMedia('(min-width: 769px) and (max-width: 1024px)').matches;
+  
+  if (isMobile) {
+    return baseSpeed * 0.7; // Faster on mobile
+  } else if (isTablet) {
+    return baseSpeed * 0.8; // Slightly faster on tablet
+  }
+  return baseSpeed; // Default speed on desktop
+};
+
 // Function to simulate typing effect
-const typeText = async (targetRef: Ref<string>, fullText: string, speed = 100) => {
+const typeText = async (targetRef: Ref<string>, fullText: string, baseSpeed = 100) => {
   targetRef.value = '';
   // Safety check for undefined or null fullText
   if (!fullText) return;
+  
+  // Get responsive typing speed
+  const speed = getTypingSpeed(baseSpeed);
   
   for (let i = 0; i < fullText.length; i++) {
     targetRef.value += fullText.charAt(i);
@@ -159,11 +176,11 @@ const nextSkill = () => {
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
         <!-- Left side: Introduction and name (spans 8 columns on large screens) -->
         <div class="lg:col-span-9">
-          <div class="mb-6 text-gray-300 font-mono min-h-[2rem]">
-            <p class="text-xl md:text-2xl">{{ introText }}&nbsp;</p>
+          <div class="mb-4 sm:mb-6 text-gray-300 font-mono min-h-[1.5rem] sm:min-h-[2rem]">
+            <p class="text-lg sm:text-xl md:text-2xl">{{ introText }}&nbsp;</p>
           </div>
           
-          <h1 class="text-6xl md:text-8xl font-bold mb-8 text-black dark:text-white font-mono break-words name-container min-h-[8rem]">
+          <h1 class="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold mb-4 sm:mb-8 text-black dark:text-white font-mono break-words name-container min-h-[4rem] sm:min-h-[6rem] md:min-h-[8rem]">
             {{ nameText }}
             <span class="cursor-container inline-block w-[1ch] h-[1em] align-middle relative">
               <span v-show="showCursor && nameText.length === fullNameText.length" class="cursor absolute top-0 left-0">|</span>
@@ -171,7 +188,7 @@ const nextSkill = () => {
             <span v-show="nameText.length === 0">&nbsp;</span>
           </h1>
           
-          <p class="text-2xl md:text-4xl text-blue-500 font-mono mb-10 role-container min-h-[4rem]">
+          <p class="text-xl sm:text-2xl md:text-3xl lg:text-4xl text-blue-500 font-mono mb-6 sm:mb-10 role-container min-h-[2.5rem] sm:min-h-[3rem] md:min-h-[4rem]">
             {{ roleText }}
             <span class="cursor-container inline-block w-[1ch] h-[1em] align-middle relative">
               <span v-show="showCursor && roleText.length === fullRoleText.length && nameText.length === fullNameText.length" class="cursor absolute top-0 left-0">|</span>
@@ -179,9 +196,9 @@ const nextSkill = () => {
             <span v-show="roleText.length === 0">&nbsp;</span>
           </p>
           
-          <div class="font-mono text-lg md:text-2xl mt-10 min-h-[5rem]">
+          <div class="font-mono text-base sm:text-lg md:text-xl lg:text-2xl mt-6 sm:mt-10 min-h-[3rem] sm:min-h-[5rem]">
             <div class="text-gray-500 dark:text-gray-400 font-mono mb-2">
-              <p class="text-xl">{{ t('home.github') }}</p>
+              <p class="text-lg sm:text-xl">{{ t('home.github') }}</p>
             </div>
             <span class="text-black dark:text-white">const</span> <span class="text-green-600 dark:text-green-400">githubLink</span> <span class="text-black dark:text-white">=</span> <span class="text-orange-600 dark:text-orange-300">"github.com/eslamgmalelsayed"</span>
           </div>
@@ -327,5 +344,26 @@ const nextSkill = () => {
 .fade-enter-from,
 .fade-leave-to {
   opacity: 0;
+}
+
+/* Responsive cursor size adjustments */
+@media (max-width: 640px) {
+  .cursor {
+    font-size: 0.8em;
+  }
+}
+
+@media (min-width: 641px) and (max-width: 768px) {
+  .cursor {
+    font-size: 0.9em;
+  }
+}
+
+/* Ensure text doesn't overflow on small screens */
+.name-container, .role-container {
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  word-break: break-word;
+  hyphens: auto;
 }
 </style>

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, watch, onUnmounted } from 'vue';
+import { ref, onMounted, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { SunIcon, MoonIcon } from '@heroicons/vue/24/outline';
 import { getThemePreference, saveThemePreference, applyTheme } from '../utils/preferences';
@@ -30,37 +30,16 @@ const updateTheme = () => {
   applyTheme(theme);
 };
 
-// Initialize theme based on user preference or system preference
+// Initialize theme based on user preference
 onMounted(() => {
   // Get saved preference using our utility
   const savedTheme = getThemePreference();
   
   // Set initial state based on preference
-  if (savedTheme === 'system') {
-    isDark.value = window.matchMedia('(prefers-color-scheme: dark)').matches;
-  } else {
-    isDark.value = savedTheme === 'dark';
-  }
+  isDark.value = savedTheme === 'dark';
   
   // Apply initial theme
   updateTheme();
-  
-  // Listen for system preference changes
-  const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-  const handleChange = (e: MediaQueryListEvent) => {
-    if (getThemePreference() === 'system') {
-      isDark.value = e.matches;
-      updateTheme();
-    }
-  };
-  
-  // Add event listener
-  mediaQuery.addEventListener('change', handleChange);
-  
-  // Clean up event listener on component unmount
-  onUnmounted(() => {
-    mediaQuery.removeEventListener('change', handleChange);
-  });
 });
 
 // Watch for changes to isDark and update theme

@@ -140,7 +140,9 @@ export default {
     about: 'نبذة عني',
     skills: 'المهارات',
     projects: 'المشاريع',
-    contact: 'اتصل بي'
+    contact: 'اتصل بي',
+    openMenu: 'فتح القائمة',
+    closeMenu: 'إغلاق القائمة'
   },
 
   // ترجمات التذييل

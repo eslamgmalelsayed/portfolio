@@ -16,11 +16,18 @@ const i18n = createI18n<[MessageSchema], 'en' | 'ar'>({
 // Function to change language and store preference
 export const setLanguage = (lang: 'en' | 'ar') => {
   saveLanguagePreference(lang)
-  // Fix: Access locale properly in the Composition API
-  i18n.global.locale = lang
+  
+  // Update i18n locale - this is the correct way to change locale in Vue I18n 9
+  i18n.global.locale.value = lang as any
   
   // Update SEO meta tags for the new language
   updateSeoForLanguage(lang)
+  
+  // Force reload of navigation links
+  window.dispatchEvent(new Event('language-changed'))
+  
+  // Force reload of the page to ensure all translations are applied
+  window.location.reload()
 }
 
 // Initialize SEO meta tags with current language on app load

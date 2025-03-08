@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue';
+import { ref, onMounted, onUnmounted, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRoute } from 'vue-router';
 import ThemeToggle from './ThemeToggle.vue';
+import { setLanguage } from '../i18n';
 
 const { t, locale } = useI18n({ useScope: 'global' });
 const route = useRoute();
@@ -13,11 +14,19 @@ const isMobileMenuOpen = ref(false);
 // Function to toggle mobile menu
 const toggleMobileMenu = () => {
   isMobileMenuOpen.value = !isMobileMenuOpen.value;
+  
+  // Prevent scrolling when mobile menu is open
+  if (isMobileMenuOpen.value) {
+    document.body.style.overflow = 'hidden';
+  } else {
+    document.body.style.overflow = '';
+  }
 };
 
 // Function to close mobile menu
 const closeMobileMenu = () => {
   isMobileMenuOpen.value = false;
+  document.body.style.overflow = '';
 };
 
 // Function to switch language
@@ -26,12 +35,8 @@ const toggleLanguage = () => {
   const currentLang = locale.value;
   const newLang = currentLang === 'en' ? 'ar' : 'en';
   
-  // Update the locale
-  locale.value = newLang;
-  
-  // Update document attributes
-  document.documentElement.dir = newLang === 'ar' ? 'rtl' : 'ltr';
-  document.documentElement.lang = newLang;
+  // Use the setLanguage function to update locale and save preference
+  setLanguage(newLang);
 };
 
 // Determine if the current route is active
@@ -40,30 +45,56 @@ const isActiveRoute = (routeName: string) => {
   return route.name === routeName;
 };
 
-// Navigation links with emoji icons
-const navLinks = [
+// Navigation links with emoji icons - reactive to language changes
+const navLinks = ref([
   { name: 'Home', path: '/', label: t('nav.home'), emoji: '👋' },
   { name: 'About', path: '/about', label: t('nav.about'), emoji: '👨‍💻' },
   { name: 'Skills', path: '/skills', label: t('nav.skills'), emoji: '🛠️' },
   { name: 'Projects', path: '/projects', label: t('nav.projects'), emoji: '🚀' },
   { name: 'Contact', path: '/contact', label: t('nav.contact'), emoji: '📧' }
-];
+]);
+
+// Update navigation labels when language changes
+const updateNavLabels = () => {
+  navLinks.value = [
+    { name: 'Home', path: '/', label: t('nav.home'), emoji: '👋' },
+    { name: 'About', path: '/about', label: t('nav.about'), emoji: '👨‍💻' },
+    { name: 'Skills', path: '/skills', label: t('nav.skills'), emoji: '🛠️' },
+    { name: 'Projects', path: '/projects', label: t('nav.projects'), emoji: '🚀' },
+    { name: 'Contact', path: '/contact', label: t('nav.contact'), emoji: '📧' }
+  ];
+};
+
+// Watch for language changes
+watch(locale, () => {
+  updateNavLabels();
+});
 
 // Close mobile menu when window is resized to desktop size
 const handleResize = () => {
   if (window.innerWidth >= 768 && isMobileMenuOpen.value) {
     isMobileMenuOpen.value = false;
+    document.body.style.overflow = '';
   }
+};
+
+// Handle language change event
+const handleLanguageChange = () => {
+  updateNavLabels();
 };
 
 // Add event listeners
 onMounted(() => {
   window.addEventListener('resize', handleResize);
+  window.addEventListener('language-changed', handleLanguageChange);
+  updateNavLabels();
 });
 
 // Remove event listeners
 onUnmounted(() => {
   window.removeEventListener('resize', handleResize);
+  window.removeEventListener('language-changed', handleLanguageChange);
+  document.body.style.overflow = '';
 });
 </script>
 
@@ -152,10 +183,10 @@ onUnmounted(() => {
     <!-- Mobile menu, show/hide based on menu state -->
     <div 
       id="mobile-menu" 
-      class="md:hidden"
+      class="md:hidden fixed inset-0 bg-white dark:bg-[#011627] z-50"
       :class="{ 'block': isMobileMenuOpen, 'hidden': !isMobileMenuOpen }"
     >
-      <div class="px-4 py-6 flex-1 flex flex-col">
+      <div class="px-4 py-6 flex flex-col h-full">
         <!-- Close button at the top right -->
         <div class="flex justify-end mb-8">
           <button 
@@ -177,34 +208,32 @@ onUnmounted(() => {
         </div>
         
         <!-- Mobile Navigation Links -->
-        <div class="flex flex-col space-y-4 mb-8">
+        <div class="flex flex-col space-y-6 mb-auto">
           <router-link 
             v-for="link in navLinks" 
             :key="link.name"
             :to="link.path"
             :class="[
-              'flex items-center px-4 py-2 rounded-md text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-200',
+              'flex items-center px-4 py-3 rounded-md text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-200',
               isActiveRoute(link.name) ? 'active-link-mobile' : ''
             ]"
             @click="closeMobileMenu"
           >
-            <span class="mr-2 rtl:ml-2 rtl:mr-0 text-xl">{{ link.emoji }}</span>
-            <span class="text-lg">{{ link.label }}</span>
+            <span class="mr-3 rtl:ml-3 rtl:mr-0 text-2xl">{{ link.emoji }}</span>
+            <span class="text-xl font-medium">{{ link.label }}</span>
           </router-link>
         </div>
         
         <!-- Mobile Controls -->
-        <div class="flex flex-col space-y-4">
+        <div class="flex flex-col space-y-4 mt-auto mb-8">
           <!-- Language Toggle -->
           <button
             @click="toggleLanguage"
-            class="px-4 py-2 text-base rounded-md font-medium bg-gray-100 dark:bg-[#1d3b53] text-gray-700 dark:text-[#a9b7c6] border border-gray-300 dark:border-gray-600 hover:bg-gray-200 dark:hover:bg-[#2c5282] hover:text-black dark:hover:text-white transition-colors duration-200 focus:outline-none"
-            aria-label="Toggle language"
+            class="px-4 py-3 text-base rounded-md font-medium bg-gray-100 dark:bg-[#1d3b53] text-gray-700 dark:text-[#a9b7c6] border border-gray-300 dark:border-gray-600 hover:bg-gray-200 dark:hover:bg-[#2c5282] hover:text-black dark:hover:text-white transition-colors duration-200 focus:outline-none"
           >
             {{ locale === 'en' ? 'العربية' : 'English' }}
           </button>
         </div>
-        
       </div>
     </div>
   </nav>

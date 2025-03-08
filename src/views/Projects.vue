@@ -233,6 +233,9 @@ function getProjectEmoji(category: string) {
 onMounted(() => {
   // Add event listeners after DOM is fully rendered
   setTimeout(() => {
+    // Check if the device is not mobile before applying animations
+    const isMobile = window.matchMedia('(max-width: 768px)').matches;
+    
     const cards = document.querySelectorAll('.project-card');
     cards.forEach((card) => {
       const cardElement = card as HTMLElement;
@@ -241,16 +244,29 @@ onMounted(() => {
       cardElement.removeEventListener('mousemove', (e: MouseEvent) => handleMouseMove(e, cardElement));
       cardElement.removeEventListener('mouseleave', () => handleMouseLeave(cardElement));
       
-      // Add new event listeners with proper binding
-      const mouseMoveHandler = (e: MouseEvent) => handleMouseMove(e, cardElement);
-      const mouseLeaveHandler = () => handleMouseLeave(cardElement);
-      
-      cardElement.addEventListener('mousemove', mouseMoveHandler);
-      cardElement.addEventListener('mouseleave', mouseLeaveHandler);
-      
-      // Store handlers on the element for later removal
-      (cardElement as any)._mouseMoveHandler = mouseMoveHandler;
-      (cardElement as any)._mouseLeaveHandler = mouseLeaveHandler;
+      // Only add event listeners on non-mobile devices
+      if (!isMobile) {
+        // Add new event listeners with proper binding
+        const mouseMoveHandler = (e: MouseEvent) => handleMouseMove(e, cardElement);
+        const mouseLeaveHandler = () => handleMouseLeave(cardElement);
+        
+        cardElement.addEventListener('mousemove', mouseMoveHandler);
+        cardElement.addEventListener('mouseleave', mouseLeaveHandler);
+        
+        // Store handlers on the element for later removal
+        (cardElement as any)._mouseMoveHandler = mouseMoveHandler;
+        (cardElement as any)._mouseLeaveHandler = mouseLeaveHandler;
+      } else {
+        // Reset any transform styles for mobile devices
+        cardElement.style.transform = '';
+        cardElement.style.boxShadow = '';
+        
+        // Reset highlight element
+        const highlight = cardElement.querySelector('.card-highlight') as HTMLElement;
+        if (highlight) {
+          highlight.style.opacity = '0';
+        }
+      }
     });
   }, 500); // Increased timeout to ensure DOM is ready
 });
@@ -337,5 +353,22 @@ onUnmounted(() => {
 .fade-enter-from,
 .fade-leave-to {
   opacity: 0;
+}
+
+/* Disable 3D transforms on mobile */
+@media (max-width: 768px) {
+  .project-card {
+    transform: none !important;
+    transition: box-shadow 0.3s ease;
+  }
+  
+  .project-card:hover {
+    transform: none !important;
+    animation: none !important;
+  }
+  
+  .card-highlight {
+    display: none;
+  }
 }
 </style>

@@ -140,7 +140,9 @@ export default {
     about: 'About',
     skills: 'Skills',
     projects: 'Projects',
-    contact: 'Contact'
+    contact: 'Contact',
+    openMenu: 'Open menu',
+    closeMenu: 'Close menu'
   },
 
   // Footer translations

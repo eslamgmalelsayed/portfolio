@@ -1,7 +1,7 @@
 // User preferences utility for storing and retrieving theme and language settings
 
 // Types
-type ThemePreference = 'light' | 'dark' | 'system';
+type ThemePreference = 'light' | 'dark';
 type LanguagePreference = 'en' | 'ar';
 type DirectionPreference = 'ltr' | 'rtl';
 
@@ -11,7 +11,7 @@ const LANGUAGE_KEY = 'portfolio_language';
 const DIRECTION_KEY = 'portfolio_direction';
 
 // Default values
-const DEFAULT_THEME: ThemePreference = 'system';
+const DEFAULT_THEME: ThemePreference = 'light';
 const DEFAULT_LANGUAGE: LanguagePreference = 'en';
 const DEFAULT_DIRECTION: DirectionPreference = 'ltr';
 
@@ -21,7 +21,7 @@ const DEFAULT_DIRECTION: DirectionPreference = 'ltr';
  */
 export const getThemePreference = (): ThemePreference => {
   const storedTheme = localStorage.getItem(THEME_KEY);
-  return (storedTheme === 'light' || storedTheme === 'dark' || storedTheme === 'system') 
+  return (storedTheme === 'light' || storedTheme === 'dark') 
     ? storedTheme as ThemePreference 
     : DEFAULT_THEME;
 };
@@ -81,15 +81,7 @@ export const saveDirectionPreference = (direction: DirectionPreference): void =>
  * @param theme The theme to apply
  */
 export const applyTheme = (theme: ThemePreference): void => {
-  // If system preference, check user's OS preference
-  if (theme === 'system') {
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    if (prefersDark) {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
-  } else if (theme === 'dark') {
+  if (theme === 'dark') {
     document.documentElement.classList.add('dark');
   } else {
     document.documentElement.classList.remove('dark');
