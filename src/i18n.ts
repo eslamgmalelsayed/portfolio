@@ -16,7 +16,8 @@ const i18n = createI18n<[MessageSchema], 'en' | 'ar'>({
 // Function to change language and store preference
 export const setLanguage = (lang: 'en' | 'ar') => {
   saveLanguagePreference(lang)
-  i18n.global.locale.value = lang
+  // Fix: Access locale properly in the Composition API
+  i18n.global.locale = lang
   
   // Update SEO meta tags for the new language
   updateSeoForLanguage(lang)
@@ -24,7 +25,9 @@ export const setLanguage = (lang: 'en' | 'ar') => {
 
 // Initialize SEO meta tags with current language on app load
 if (typeof window !== 'undefined') {
-  updateSeoForLanguage(i18n.global.locale.value)
+  // Fix: Access current locale properly
+  const currentLocale = i18n.global.locale as unknown as string
+  updateSeoForLanguage(currentLocale)
 }
 
 export default i18n

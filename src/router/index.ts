@@ -118,7 +118,7 @@ router.beforeEach((to, from, next) => {
   
   let ogUrlMeta = document.querySelector('meta[property="og:url"]')
   if (ogUrlMeta) {
-    ogUrlMeta.setAttribute('content', `https://eslamgamal.dev${to.path}`)
+    ogUrlMeta.setAttribute('content', `https://eslamgmalelsayed.com${to.path}`)
   }
   
   let ogImageMeta = document.querySelector('meta[property="og:image"]')

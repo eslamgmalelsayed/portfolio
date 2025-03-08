@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch, onMounted, onUnmounted } from 'vue';
+import { ref, watch, onMounted, onUnmounted, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import ThemeToggle from './components/ThemeToggle.vue';
 import Navigation from './components/Navigation.vue';
@@ -10,6 +10,9 @@ import { applyLanguage, initializePreferences } from './utils/preferences';
 const { t, locale } = useI18n();
 const availableLocales = ['en', 'ar'];
 
+// Create a computed property for the current locale
+const currentLocale = computed(() => locale.value as string);
+
 // Custom cursor state
 const cursorPosition = ref({ x: 0, y: 0 });
 const cursorVisible = ref(false);
@@ -18,14 +21,14 @@ const isTouchDevice = ref(false);
 
 // Function to switch language and store preference
 const toggleLanguage = () => {
-  const newLocale = locale.value === 'en' ? 'ar' : 'en';
-  setLanguage(newLocale);
+  const newLocale = currentLocale.value === 'en' ? 'ar' : 'en';
+  setLanguage(newLocale as 'en' | 'ar');
   applyLanguage(newLocale as 'en' | 'ar');
 };
 
 // Set initial document direction and language
 watch(
-  () => locale.value,
+  currentLocale,
   (newLocale) => {
     applyLanguage(newLocale as 'en' | 'ar');
   },
@@ -115,7 +118,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div :class="{ 'rtl': locale === 'ar' }" class="min-h-screen bg-gray-100 dark:bg-[var(--dark-bg)] text-gray-800 dark:text-gray-200 transition-colors duration-200">
+  <div :class="{ 'rtl': currentLocale === 'ar' }" class="min-h-screen bg-gray-100 dark:bg-[var(--dark-bg)] text-gray-800 dark:text-gray-200 transition-colors duration-200">
     <!-- Custom cursor (only shown on non-touch devices) -->
     <template v-if="!isTouchDevice">
       <div 
@@ -156,7 +159,7 @@ onUnmounted(() => {
     <main class="container mx-auto px-4 py-8 min-h-[calc(100vh-12rem)] overflow-hidden">
       <router-view v-slot="{ Component, route }">
         <transition 
-          :name="locale === 'ar' ? 'slide-rtl' : 'slide-ltr'" 
+          :name="currentLocale === 'ar' ? 'slide-rtl' : 'slide-ltr'" 
           mode="out-in"
           appear
         >
@@ -198,7 +201,7 @@ onUnmounted(() => {
             </div>
           </div>
           <p class="text-gray-600 dark:text-gray-400 mb-4 md:mb-0">
-            &copy; {{ new Date().getFullYear() }} {{ t('footer.copyright') }}. {{ t('footer.language') }}: {{ locale.toUpperCase() }}
+            &copy; {{ new Date().getFullYear() }} {{ t('footer.copyright') }}. {{ t('footer.language') }}: {{ currentLocale.toUpperCase() }}
           </p>
         </div>
       </div>

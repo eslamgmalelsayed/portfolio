@@ -1,0 +1,14 @@
+# netlify.toml
+# This file tells Netlify how to handle routes for a single-page application
+
+[build]
+  publish = "dist"
+  command = "npm run build"
+
+# The following redirect rule tells Netlify that for any request to a URL that
+# doesn't exist on the static server, serve up the index.html instead.
+# This allows the Vue.js router to handle the routing.
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
