@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted, watch } from 'vue';
+import { ref, onMounted, onUnmounted, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRoute } from 'vue-router';
 import ThemeToggle from './ThemeToggle.vue';
@@ -45,8 +45,8 @@ const isActiveRoute = (routeName: string) => {
   return route.name === routeName;
 };
 
-// Navigation links with emoji icons - reactive to language changes
-const navLinks = ref([
+// Navigation links with emoji icons - using computed property for reactivity
+const navLinks = computed(() => [
   { name: 'Home', path: '/', label: t('nav.home'), emoji: '👋' },
   { name: 'About', path: '/about', label: t('nav.about'), emoji: '👨‍💻' },
   { name: 'Skills', path: '/skills', label: t('nav.skills'), emoji: '🛠️' },
@@ -54,21 +54,10 @@ const navLinks = ref([
   { name: 'Contact', path: '/contact', label: t('nav.contact'), emoji: '📧' }
 ]);
 
-// Update navigation labels when language changes
-const updateNavLabels = () => {
-  navLinks.value = [
-    { name: 'Home', path: '/', label: t('nav.home'), emoji: '👋' },
-    { name: 'About', path: '/about', label: t('nav.about'), emoji: '👨‍💻' },
-    { name: 'Skills', path: '/skills', label: t('nav.skills'), emoji: '🛠️' },
-    { name: 'Projects', path: '/projects', label: t('nav.projects'), emoji: '🚀' },
-    { name: 'Contact', path: '/contact', label: t('nav.contact'), emoji: '📧' }
-  ];
-};
-
-// Watch for language changes
-watch(locale, () => {
-  updateNavLabels();
-});
+// Computed properties for menu button labels
+const openMenuLabel = computed(() => t('nav.openMenu'));
+const closeMenuLabel = computed(() => t('nav.closeMenu'));
+const languageToggleLabel = computed(() => locale.value === 'en' ? 'العربية' : 'English');
 
 // Close mobile menu when window is resized to desktop size
 const handleResize = () => {
@@ -78,22 +67,14 @@ const handleResize = () => {
   }
 };
 
-// Handle language change event
-const handleLanguageChange = () => {
-  updateNavLabels();
-};
-
 // Add event listeners
 onMounted(() => {
   window.addEventListener('resize', handleResize);
-  window.addEventListener('language-changed', handleLanguageChange);
-  updateNavLabels();
 });
 
 // Remove event listeners
 onUnmounted(() => {
   window.removeEventListener('resize', handleResize);
-  window.removeEventListener('language-changed', handleLanguageChange);
   document.body.style.overflow = '';
 });
 </script>
@@ -141,7 +122,7 @@ onUnmounted(() => {
           class="px-3 py-1.5 text-sm rounded-md font-medium bg-gray-100 dark:bg-[#1d3b53] text-gray-700 dark:text-[#a9b7c6] border border-gray-300 dark:border-gray-600 hover:bg-gray-200 dark:hover:bg-[#2c5282] hover:text-black dark:hover:text-white transition-colors duration-200 focus:outline-none"
           aria-label="Toggle language"
         >
-          {{ locale === 'en' ? 'العربية' : 'English' }}
+          {{ languageToggleLabel }}
         </button>
       
         <!-- Mobile Menu Button - only visible on mobile -->
@@ -151,7 +132,7 @@ onUnmounted(() => {
           aria-controls="mobile-menu"
           :aria-expanded="isMobileMenuOpen"
         >
-          <span class="sr-only">{{ isMobileMenuOpen ? t('nav.closeMenu') : t('nav.openMenu') }}</span>
+          <span class="sr-only">{{ isMobileMenuOpen ? closeMenuLabel : openMenuLabel }}</span>
           <!-- Icon when menu is closed -->
           <svg 
             class="h-6 w-6" 
@@ -193,7 +174,7 @@ onUnmounted(() => {
             @click="closeMobileMenu"
             class="inline-flex items-center justify-center p-2 rounded-md text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-100 dark:hover:bg-gray-800 focus:outline-none"
           >
-            <span class="sr-only">{{ t('nav.closeMenu') }}</span>
+            <span class="sr-only">{{ closeMenuLabel }}</span>
             <svg 
               class="h-6 w-6" 
               xmlns="http://www.w3.org/2000/svg" 
@@ -231,7 +212,7 @@ onUnmounted(() => {
             @click="toggleLanguage"
             class="px-4 py-3 text-base rounded-md font-medium bg-gray-100 dark:bg-[#1d3b53] text-gray-700 dark:text-[#a9b7c6] border border-gray-300 dark:border-gray-600 hover:bg-gray-200 dark:hover:bg-[#2c5282] hover:text-black dark:hover:text-white transition-colors duration-200 focus:outline-none"
           >
-            {{ locale === 'en' ? 'العربية' : 'English' }}
+            {{ languageToggleLabel }}
           </button>
         </div>
       </div>

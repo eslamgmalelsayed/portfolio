@@ -145,9 +145,12 @@ onMounted(() => {
                     
                     <!-- Education Details -->
                     <div class="overflow-hidden flex-grow">
-                      <h3 class="text-lg font-bold text-violet-700 dark:text-blue-400">{{ t('about.education.degree') }}</h3>
-                      <p class="text-gray-700 dark:text-gray-300 font-medium text-sm">{{ t('about.education.university') }}</p>
-                      <p class="text-gray-600 dark:text-gray-400 text-xs">{{ t('about.education.date') }}</p>
+                      <h3 class="text-lg font-bold text-black dark:text-blue-400">{{ t('about.education.degree') }}</h3>
+                      <p class="text-black dark:text-blue-300 font-medium text-sm">{{ t('about.education.university') }}</p>
+                      <p class="text-emerald-600 dark:text-emerald-400 font-medium text-xs px-2 py-1 rounded-full bg-emerald-100 dark:bg-emerald-900/30 whitespace-nowrap inline-flex items-center mt-1">
+                        <span class="mr-1" role="img" aria-label="Date">⏳</span>
+                        {{ t('about.education.date') }}
+                      </p>
                       <p class="mt-2 text-gray-800 dark:text-gray-200 text-sm">{{ t('about.education.description') }}</p>
                     </div>
                   </div>
@@ -165,8 +168,12 @@ onMounted(() => {
                     
                     <!-- Course Details -->
                     <div class="overflow-hidden flex-grow">
-                      <h3 class="text-lg font-bold text-violet-700 dark:text-blue-400">{{ t('about.course') }}</h3>
-                      <p class="text-gray-600 dark:text-gray-400 text-xs">{{ t('about.courseDate') }}</p>
+                      <h3 class="text-lg font-bold text-black dark:text-blue-400">{{ t('about.course') }}</h3>
+                      <p class="text-black dark:text-blue-300 font-medium text-sm">{{ t('about.courseProvider') }}</p>
+                      <p class="text-emerald-600 dark:text-emerald-400 font-medium text-xs px-2 py-1 rounded-full bg-emerald-100 dark:bg-emerald-900/30 whitespace-nowrap inline-flex items-center mt-1">
+                        <span class="mr-1" role="img" aria-label="Date">⏳</span>
+                        {{ t('about.courseDate') }}
+                      </p>
                       <p class="mt-2 text-gray-800 dark:text-gray-200 text-sm">{{ t('about.courseDescription') }}</p>
                     </div>
                   </div>
@@ -211,7 +218,7 @@ onMounted(() => {
                   <div class="bg-white dark:bg-[#01223d] rounded-lg p-5 shadow-md transition-all duration-300 hover:shadow-lg hover:-translate-y-1 border border-gray-200 dark:border-gray-700" :class="{ 'ml-8': $i18n.locale === 'en', 'mr-8': $i18n.locale === 'ar' }">
                     <div class="flex items-center justify-between mb-2">
                       <div class="font-bold text-lg text-black dark:text-white">{{ t('about.job1Title') }}</div>
-                      <div class="text-emerald-600 dark:text-emerald-400 font-medium text-sm px-2 py-1 rounded-full bg-emerald-100 dark:bg-emerald-900/30 whitespace-nowrap flex items-center">
+                      <div class="text-emerald-600 dark:text-emerald-400 font-medium text-xs px-2 py-1 rounded-full bg-emerald-100 dark:bg-emerald-900/30 whitespace-nowrap inline-flex items-center">
                         <span class="mr-1" role="img" aria-label="Current">⏳</span>
                         {{ t('about.job1Date') }}
                       </div>

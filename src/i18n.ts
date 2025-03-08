@@ -17,17 +17,21 @@ const i18n = createI18n<[MessageSchema], 'en' | 'ar'>({
 export const setLanguage = (lang: 'en' | 'ar') => {
   saveLanguagePreference(lang)
   
-  // Update i18n locale - this is the correct way to change locale in Vue I18n 9
-  i18n.global.locale.value = lang as any
+  // Direct approach to change the locale that works with Vue I18n 9 in Composition API
+  // This bypasses TypeScript errors while still updating the locale correctly
+  document.documentElement.lang = lang
+  document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr'
+  
+  // Force Vue I18n to recognize the language change
+  // This is a workaround for TypeScript type issues
+  const compositionInstance = i18n as any
+  compositionInstance.global.locale.value = lang
   
   // Update SEO meta tags for the new language
   updateSeoForLanguage(lang)
   
-  // Force reload of navigation links
+  // Dispatch a custom event that components can listen for to update their translations
   window.dispatchEvent(new Event('language-changed'))
-  
-  // Force reload of the page to ensure all translations are applied
-  window.location.reload()
 }
 
 // Initialize SEO meta tags with current language on app load
