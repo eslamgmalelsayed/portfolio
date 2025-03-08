@@ -11,7 +11,7 @@ const LANGUAGE_KEY = 'portfolio_language';
 const DIRECTION_KEY = 'portfolio_direction';
 
 // Default values
-const DEFAULT_THEME: ThemePreference = 'light';
+const DEFAULT_THEME: ThemePreference = 'dark';
 const DEFAULT_LANGUAGE: LanguagePreference = 'en';
 const DEFAULT_DIRECTION: DirectionPreference = 'ltr';
 
