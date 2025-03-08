@@ -140,12 +140,12 @@ function getSkillDescription(skill: string): string {
       </div>
       
       <!-- Code Editor Tabs -->
-      <div class="flex border-b border-gray-200 dark:border-gray-700">
+      <div class="flex flex-wrap border-b border-gray-200 dark:border-gray-700">
         <button 
           v-for="category in skillCategories" 
           :key="category.name"
           @click="setActiveTab(category.name)"
-          class="px-4 py-2 font-mono text-sm border-r border-gray-200 dark:border-gray-700 focus:outline-none transition-colors"
+          class="px-3 py-2 sm:px-4 font-mono text-xs sm:text-sm border-r border-gray-200 dark:border-gray-700 focus:outline-none transition-colors"
           :class="activeTab === category.name ? 'bg-gray-100 dark:bg-[#1E2D3D] text-black dark:text-white border-b-2 border-blue-500 dark:border-[#f78c6c]' : 'text-gray-700 dark:text-[#a9b7c6] hover:bg-gray-100 dark:hover:bg-[#1E2D3D] hover:text-black dark:hover:text-white'"
         >
           {{ category.name }}.js
@@ -153,33 +153,33 @@ function getSkillDescription(skill: string): string {
       </div>
       
       <!-- Code Editor Content -->
-      <div class="p-6 font-mono">
+      <div class="p-3 sm:p-4 md:p-6 font-mono">
         <template v-for="category in skillCategories" :key="category.name">
           <div v-if="activeTab === category.name" class="text-gray-700 dark:text-[#a9b7c6] mb-6">
             <div class="mb-2">
               <span class="text-purple-600 dark:text-[#c792ea]">const</span> 
-              <span class="text-yellow-600 dark:text-[#ffcb6b] ml-2">{{ category.name.toLowerCase().replace(/\s+/g, '') }}Skills</span> 
-              <span class="text-black dark:text-white ml-2">=</span> 
-              <span class="text-blue-500 dark:text-[#89ddff] ml-2">{</span>
+              <span class="text-yellow-600 dark:text-[#ffcb6b] ml-1 sm:ml-2">{{ category.name.toLowerCase().replace(/\s+/g, '') }}Skills</span> 
+              <span class="text-black dark:text-white ml-1 sm:ml-2">=</span> 
+              <span class="text-blue-500 dark:text-[#89ddff] ml-1 sm:ml-2">{</span>
             </div>
             
-            <div class="ml-8 space-y-6">
+            <div class="ml-4 sm:ml-8 space-y-4 sm:space-y-6">
               <div v-for="(skill, index) in category.skills" :key="index" class="mb-2">
                 <div class="flex items-center mb-1">
-                  <span class="text-green-600 dark:text-[#c3e88d]">"{{ skill.name }}"</span>
+                  <span class="text-green-600 dark:text-[#c3e88d] text-sm sm:text-base">"{{ skill.name }}"</span>
                   <span class="text-black dark:text-white">:</span>
-                  <span class="text-orange-500 dark:text-[#f78c6c] ml-2">true</span>
+                  <span class="text-orange-500 dark:text-[#f78c6c] ml-1 sm:ml-2 text-sm sm:text-base">true</span>
                 </div>
                 
-                <div class="text-sm text-gray-500 mb-2">
+                <div class="text-xs sm:text-sm text-gray-500 mb-2">
                   <span class="text-blue-600 dark:text-[#82aaff]">function</span> 
-                  <span class="text-yellow-600 dark:text-[#ffcb6b] ml-2">describe{{ skill.name.replace(/\./g, '').replace(/\s+/g, '') }}()</span> 
-                  <span class="text-black dark:text-white ml-2">{</span>
+                  <span class="text-yellow-600 dark:text-[#ffcb6b] ml-1 sm:ml-2">describe{{ skill.name.replace(/\./g, '').replace(/\s+/g, '') }}()</span> 
+                  <span class="text-black dark:text-white ml-1 sm:ml-2">{</span>
                 </div>
-                <div class="ml-4 text-sm text-green-600 dark:text-[#c3e88d]">
+                <div class="ml-2 sm:ml-4 text-xs sm:text-sm text-green-600 dark:text-[#c3e88d]">
                   "{{ getSkillDescription(skill.name) }}"
                 </div>
-                <div class="text-sm text-black dark:text-white">}</div>
+                <div class="text-xs sm:text-sm text-black dark:text-white">}</div>
               </div>
             </div>
             
@@ -200,40 +200,40 @@ function getSkillDescription(skill: string): string {
         <div class="text-gray-700 dark:text-[#a9b7c6] font-mono text-sm">certificates.json</div>
       </div>
       
-      <div class="p-6 font-mono">
+      <div class="p-3 sm:p-4 md:p-6 font-mono">
         <div class="text-gray-700 dark:text-[#a9b7c6] mb-4">
           <span class="text-purple-600 dark:text-[#c792ea]">const</span> 
-          <span class="text-yellow-600 dark:text-[#ffcb6b] ml-2">certificates</span> 
-          <span class="text-black dark:text-white ml-2">=</span> 
-          <span class="text-blue-500 dark:text-[#89ddff] ml-2">[</span>
+          <span class="text-yellow-600 dark:text-[#ffcb6b] ml-1 sm:ml-2">certificates</span> 
+          <span class="text-black dark:text-white ml-1 sm:ml-2">=</span> 
+          <span class="text-blue-500 dark:text-[#89ddff] ml-1 sm:ml-2">[</span>
         </div>
         
-        <div class="ml-8 space-y-6">
+        <div class="ml-4 sm:ml-8 space-y-4 sm:space-y-6">
           <div v-for="(cert, index) in certificates" :key="index" class="mb-4">
             <div class="text-blue-500 dark:text-[#89ddff]">{</div>
-            <div class="ml-4">
+            <div class="ml-2 sm:ml-4">
               <div>
-                <span class="text-green-600 dark:text-[#c3e88d]">"name"</span>
+                <span class="text-green-600 dark:text-[#c3e88d] text-xs sm:text-sm">"name"</span>
                 <span class="text-black dark:text-white">:</span>
-                <span class="text-green-600 dark:text-[#c3e88d] ml-2">"{{ cert.name }}"</span>
+                <span class="text-green-600 dark:text-[#c3e88d] ml-1 sm:ml-2 text-xs sm:text-sm">"{{ cert.name }}"</span>
                 <span class="text-gray-500">,</span>
               </div>
               <div>
-                <span class="text-green-600 dark:text-[#c3e88d]">"issuer"</span>
+                <span class="text-green-600 dark:text-[#c3e88d] text-xs sm:text-sm">"issuer"</span>
                 <span class="text-black dark:text-white">:</span>
-                <span class="text-green-600 dark:text-[#c3e88d] ml-2">"{{ cert.issuer }}"</span>
+                <span class="text-green-600 dark:text-[#c3e88d] ml-1 sm:ml-2 text-xs sm:text-sm">"{{ cert.issuer }}"</span>
                 <span class="text-gray-500">,</span>
               </div>
               <div>
-                <span class="text-green-600 dark:text-[#c3e88d]">"date"</span>
+                <span class="text-green-600 dark:text-[#c3e88d] text-xs sm:text-sm">"date"</span>
                 <span class="text-black dark:text-white">:</span>
-                <span class="text-orange-500 dark:text-[#f78c6c] ml-2">"{{ cert.date }}"</span>
+                <span class="text-orange-500 dark:text-[#f78c6c] ml-1 sm:ml-2 text-xs sm:text-sm">"{{ cert.date }}"</span>
                 <span class="text-gray-500">,</span>
               </div>
               <div>
-                <span class="text-green-600 dark:text-[#c3e88d]">"link"</span>
+                <span class="text-green-600 dark:text-[#c3e88d] text-xs sm:text-sm">"link"</span>
                 <span class="text-black dark:text-white">:</span>
-                <span class="text-blue-600 dark:text-[#82aaff] ml-2 hover:underline">
+                <span class="text-blue-600 dark:text-[#82aaff] ml-1 sm:ml-2 hover:underline text-xs sm:text-sm">
                   <a :href="cert.link" target="_blank">"{{ cert.link }}"</a>
                 </span>
               </div>
@@ -249,5 +249,18 @@ function getSkillDescription(skill: string): string {
 </template>
 
 <style scoped>
-/* Add any additional styling here */
+/* Responsive styles */
+@media (max-width: 640px) {
+  .container {
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+  }
+}
+
+@media (max-width: 480px) {
+  button {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.75rem;
+  }
+}
 </style>
