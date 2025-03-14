@@ -152,5 +152,39 @@ export default {
     github: 'GitHub',
     linkedin: 'LinkedIn',
     findMeIn: 'find me in'
+  },
+
+  // Chatbot translations
+  chatbot: {
+    title: 'Portfolio Assistant',
+    welcome: 'Hi there! 👋 I\'m your portfolio assistant. How can I help you today?',
+    placeholder: 'Type your message here...',
+    send: 'Send',
+    open: 'Open chat',
+    close: 'Close chat',
+    options: {
+      projects: 'Tell me about your projects',
+      skills: 'What skills do you have?',
+      contact: 'How can I contact you?',
+      help: 'I need help',
+      viewProjects: 'View projects 👀',
+      viewSkills: 'View skills 🛠️',
+      viewAbout: 'View about me 👤',
+      contactForm: 'Go to contact form 📝',
+      notInterested: 'No thanks 👋'
+    },
+    responses: {
+      projects: 'I have worked on various projects including web applications, mobile apps, and backend systems. Would you like to see them?',
+      projectsInfo: 'My portfolio showcases a variety of projects including web applications built with Vue.js, React, and Angular, as well as backend systems using Node.js and Python. You can view detailed information about each project on my projects page.',
+      skills: 'I have experience with various technologies including Vue.js, React, TypeScript, Node.js, and more. Would you like to see my skills page?',
+      skillsInfo: 'My technical skills include frontend frameworks like Vue.js and React, programming languages such as JavaScript, TypeScript, and Python, as well as backend technologies like Node.js and Express. You can view a comprehensive list on my skills page.',
+      contact: 'You can reach me through the contact form on this page. Would you like me to take you there?',
+      contactInfo: 'You can contact me via email at eslamgmal1@gmail.com or through the contact form on this page. I\'m currently based in Riyadh, Saudi Arabia.',
+      about: 'I\'m a passionate developer with experience in web development. Would you like to learn more about me?',
+      greeting: 'Hello! 👋 How can I assist you today?',
+      default: 'I\'m here to help you navigate through my portfolio. What would you like to know about?',
+      help: 'I can help you learn about my projects, skills, or how to contact me. What are you interested in?',
+      acknowledge: 'No problem! 👍 I\'m here if you need anything else. Feel free to ask me about projects, skills, or contact information anytime.'
+    }
   }
 }

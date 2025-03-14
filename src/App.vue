@@ -6,6 +6,7 @@ import Navigation from './components/Navigation.vue';
 import SeoManager from './components/SeoManager.vue';
 import { setLanguage } from './i18n';
 import { applyLanguage, initializePreferences } from './utils/preferences';
+import ChatBot from './components/ChatBot.vue';
 
 const { t, locale } = useI18n();
 const availableLocales = ['en', 'ar'];
@@ -206,6 +207,7 @@ onUnmounted(() => {
         </div>
       </div>
     </footer>
+    <ChatBot />
   </div>
 </template>
 

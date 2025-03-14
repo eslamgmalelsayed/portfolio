@@ -1,14 +1,5 @@
 <template>
   <div class="container mx-auto px-4 py-16 min-h-screen flex flex-col justify-center relative">
-    <!-- Creative background pattern -->
-    <div class="absolute inset-0 z-0 opacity-5 dark:opacity-10 pointer-events-none">
-      <div class="grid grid-cols-10 grid-rows-10 h-full w-full">
-        <div v-for="i in 100" :key="i" class="flex items-center justify-center text-3xl opacity-50">
-          {{ ['✉️', '📱', '💬', '🌐', '📍', '🔗', '👋', '💼', '🚀', '💡'][i % 10] }}
-        </div>
-      </div>
-    </div>
-    
     <div class="max-w-full mx-auto relative z-10">
       <h1 class="text-4xl font-bold mb-8 text-black dark:text-white flex items-center">
         <span class="mr-3 animate-bounce inline-block">💌</span>
@@ -209,7 +200,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue';
+import { ref, watch, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import emailjs from '@emailjs/browser';
 
@@ -228,43 +219,46 @@ const errors = ref({
   subject: '',
   message: ''
 });
-
 const isSubmitting = ref(false);
 const submitSuccess = ref(false);
 const submitError = ref('');
 
-// AI suggestion states
-const suggestions = ref<string[]>([]);
-const showSuggestions = ref(false);
-const isGeneratingSuggestions = ref(false);
-const suggestionTimeout = ref<number | null>(null);
-
-// EmailJS configuration
-const EMAILJS_SERVICE_ID = import.meta.env.VITE_EMAILJS_SERVICE_ID;
-const EMAILJS_TEMPLATE_ID = import.meta.env.VITE_EMAILJS_TEMPLATE_ID;
-const EMAILJS_PUBLIC_KEY = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
-
-// Clear errors when user starts typing
+// Clear errors as user types
 watch(() => formData.value.name, () => {
-  if (formData.value.name.trim() && errors.value.name) {
-    errors.value.name = '';
-  }
+  if (errors.value.name) errors.value.name = '';
 });
 
 watch(() => formData.value.email, () => {
-  if (validateEmail(formData.value.email) && errors.value.email) {
-    errors.value.email = '';
-  }
+  if (errors.value.email) errors.value.email = '';
 });
 
 watch(() => formData.value.subject, () => {
-  if (formData.value.subject.trim() && errors.value.subject) {
-    errors.value.subject = '';
+  if (errors.value.subject) errors.value.subject = '';
+});
+
+watch(() => formData.value.message, () => {
+  if (errors.value.message) errors.value.message = '';
+});
+
+// Check for scrollToContactForm flag in session storage when component mounts
+onMounted(() => {
+  const shouldScrollToForm = sessionStorage.getItem('scrollToContactForm');
+  if (shouldScrollToForm === 'true') {
+    // Clear the flag
+    sessionStorage.removeItem('scrollToContactForm');
+    
+    // Scroll to the contact form
+    setTimeout(() => {
+      const contactForm = document.querySelector('form[name="contact"]');
+      if (contactForm) {
+        contactForm.scrollIntoView({ behavior: 'smooth' });
+      }
+    }, 500); // Slightly longer delay to ensure the page is fully loaded
   }
 });
 
+// Email validation
 const validateEmail = (email: string) => {
-  if (!email.trim()) return false;
   const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
   return re.test(String(email).toLowerCase());
 };
@@ -341,10 +335,10 @@ const handleSubmit = async () => {
 
     // Send email using EmailJS
     const response = await emailjs.send(
-      EMAILJS_SERVICE_ID,
-      EMAILJS_TEMPLATE_ID,
+      import.meta.env.VITE_EMAILJS_SERVICE_ID,
+      import.meta.env.VITE_EMAILJS_TEMPLATE_ID,
       templateParams,
-      EMAILJS_PUBLIC_KEY
+      import.meta.env.VITE_EMAILJS_PUBLIC_KEY
     );
     
     if (response.text === 'OK') {
