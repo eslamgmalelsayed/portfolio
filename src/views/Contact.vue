@@ -178,18 +178,6 @@
                   ></textarea>
                 </div>
                 <p v-if="errors.message" id="message-error" class="text-red-500 text-sm mt-1" role="alert">{{ errors.message }}</p>
-                
-                <!-- AI suggestions -->
-                <div v-if="showSuggestions" class="mt-4">
-                  <h3 class="text-lg font-medium text-black dark:text-white mb-2">{{ t('message.messageSuggestions') }}</h3>
-                  <ul>
-                    <li v-for="(suggestion, index) in suggestions" :key="index" class="py-2">
-                      <button @click="applySuggestion(suggestion)" class="text-gray-600 dark:text-gray-400 hover:text-blue-500 transition-colors transform transition-transform hover:scale-105">
-                        {{ suggestion }}
-                      </button>
-                    </li>
-                  </ul>
-                </div>
               </div>
               
               <div class="flex justify-end">
@@ -224,7 +212,6 @@
 import { ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import emailjs from '@emailjs/browser';
-import { OpenAI } from 'openai';
 
 const { t } = useI18n();
 
@@ -257,13 +244,6 @@ const EMAILJS_SERVICE_ID = import.meta.env.VITE_EMAILJS_SERVICE_ID;
 const EMAILJS_TEMPLATE_ID = import.meta.env.VITE_EMAILJS_TEMPLATE_ID;
 const EMAILJS_PUBLIC_KEY = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
 
-// OpenAI configuration
-const OPENAI_API_KEY = import.meta.env.VITE_OPENAI_API_KEY || '';
-const openai = new OpenAI({
-  apiKey: OPENAI_API_KEY,
-  dangerouslyAllowBrowser: true // Note: In production, you should use a backend proxy
-});
-
 // Clear errors when user starts typing
 watch(() => formData.value.name, () => {
   if (formData.value.name.trim() && errors.value.name) {
@@ -282,99 +262,6 @@ watch(() => formData.value.subject, () => {
     errors.value.subject = '';
   }
 });
-
-watch(() => formData.value.message, () => {
-  if (formData.value.message.trim() && errors.value.message) {
-    errors.value.message = '';
-  }
-  
-  // Generate suggestions when user types in message field
-  if (formData.value.message.trim().length > 10) {
-    // Clear previous timeout to prevent multiple API calls
-    if (suggestionTimeout.value) {
-      clearTimeout(suggestionTimeout.value);
-    }
-    
-    // Set a timeout to wait for user to pause typing
-    suggestionTimeout.value = setTimeout(() => {
-      generateSuggestions();
-    }, 1000) as unknown as number;
-  } else {
-    suggestions.value = [];
-    showSuggestions.value = false;
-  }
-});
-
-// Generate AI suggestions based on current message
-const generateSuggestions = async () => {
-  if (!OPENAI_API_KEY || !formData.value.message.trim() || isGeneratingSuggestions.value) {
-    return;
-  }
-  
-  isGeneratingSuggestions.value = true;
-  
-  try {
-    // Prepare context for AI
-    const prompt = `
-      You are an AI assistant helping a user write a professional message to Eslam, a full-stack developer.
-      The user has started writing the following message:
-      "${formData.value.message.trim()}"
-      
-      Based on what they've written so far, suggest 3 different ways they might continue their message.
-      Each suggestion should be 1-2 sentences that naturally continue from what they've written.
-      Make the suggestions professional, concise, and relevant to contacting a developer.
-      Format your response as a JSON array of strings, with no additional text.
-    `;
-    
-    // Call OpenAI API
-    const response = await openai.chat.completions.create({
-      model: "gpt-3.5-turbo",
-      messages: [
-        { role: "system", content: prompt }
-      ],
-      max_tokens: 200,
-      temperature: 0.7,
-    });
-    
-    const content = response.choices[0]?.message?.content || "[]";
-    
-    // Parse the response to get suggestions
-    try {
-      // Try to parse as JSON
-      const parsedSuggestions = JSON.parse(content);
-      if (Array.isArray(parsedSuggestions) && parsedSuggestions.length > 0) {
-        suggestions.value = parsedSuggestions.slice(0, 3);
-        showSuggestions.value = true;
-      } else {
-        suggestions.value = [];
-        showSuggestions.value = false;
-      }
-    } catch (parseError) {
-      // If not valid JSON, try to extract suggestions from text
-      const lines = content.split('\n').filter(line => line.trim().length > 0);
-      if (lines.length > 0) {
-        suggestions.value = lines.slice(0, 3);
-        showSuggestions.value = true;
-      } else {
-        suggestions.value = [];
-        showSuggestions.value = false;
-      }
-    }
-  } catch (error) {
-    console.error('Error generating suggestions:', error);
-    suggestions.value = [];
-    showSuggestions.value = false;
-  } finally {
-    isGeneratingSuggestions.value = false;
-  }
-};
-
-// Apply a suggestion to the message
-const applySuggestion = (suggestion: string) => {
-  formData.value.message = suggestion;
-  suggestions.value = [];
-  showSuggestions.value = false;
-};
 
 const validateEmail = (email: string) => {
   if (!email.trim()) return false;
