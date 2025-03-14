@@ -49,6 +49,7 @@ export default {
     location: 'Location',
     socialMedia: 'Social Media',
     social: 'Social',
+    whatsapp: 'WhatsApp Me',
     name: 'Name',
     subject: 'Subject',
     message: 'Message',

@@ -46,6 +46,7 @@ export default {
     getInTouch: 'تواصل معي',
     email: 'البريد الإلكتروني',
     phone: 'الهاتف',
+    whatsapp: 'راسلني على واتساب',
     location: 'الموقع',
     socialMedia: 'وسائل التواصل الاجتماعي',
     social: 'التواصل الاجتماعي',
