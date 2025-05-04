@@ -1,5 +1,5 @@
 // Service Worker for Eslam Gamal Elsayed's Portfolio
-const CACHE_NAME = 'portfolio-v1';
+const CACHE_NAME = 'portfolio-v2';
 
 // Assets to cache on install
 const STATIC_ASSETS = [
@@ -51,60 +51,46 @@ self.addEventListener('fetch', event => {
   if (!event.request.url.startsWith(self.location.origin)) {
     return;
   }
-  
-  // HTML navigation requests - network-first strategy
-  if (event.request.mode === 'navigate') {
-    event.respondWith(
-      fetch(event.request)
-        .then(response => {
-          // Cache the latest version
-          caches.open(CACHE_NAME).then(cache => {
-            cache.put(event.request, response.clone());
-          });
-          return response;
-        })
-        .catch(() => {
-          // Fallback to cache if network fails
-          return caches.match(event.request)
-            .then(cachedResponse => {
-              if (cachedResponse) {
-                return cachedResponse;
-              }
-              // If not in cache, try the offline page
-              return caches.match('/404.html');
-            });
-        })
-    );
-    return;
-  }
-  
-  // Other requests - cache-first strategy
+
   event.respondWith(
     caches.match(event.request)
       .then(cachedResponse => {
         if (cachedResponse) {
+          // Return cached response and fetch update in background
+          fetch(event.request)
+            .then(response => {
+              if (response.ok) {
+                caches.open(CACHE_NAME)
+                  .then(cache => cache.put(event.request, response));
+              }
+            })
+            .catch(() => {});
           return cachedResponse;
         }
-        
+
         return fetch(event.request)
           .then(response => {
-            // Don't cache non-successful responses
-            if (!response || response.status !== 200 || response.type !== 'basic') {
+            if (!response || !response.ok) {
               return response;
             }
-            
-            // Cache the new resource
-            caches.open(CACHE_NAME).then(cache => {
-              cache.put(event.request, response.clone());
-            });
-            
+
+            // Clone the response before caching
+            const responseToCache = response.clone();
+
+            caches.open(CACHE_NAME)
+              .then(cache => {
+                cache.put(event.request, responseToCache);
+              })
+              .catch(err => console.error('Cache put error:', err));
+
             return response;
           })
           .catch(() => {
-            // For image requests, return a placeholder if available
-            if (event.request.destination === 'image') {
-              return caches.match('/icons/icon-192x192.png');
+            // If both cache and network fail, return offline page for navigation
+            if (event.request.mode === 'navigate') {
+              return caches.match('/404.html');
             }
+            return new Response('Network error');
           });
       })
   );

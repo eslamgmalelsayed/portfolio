@@ -1,12 +1,16 @@
 <script setup lang="ts">
-import { ref, watch, onMounted, onUnmounted, computed } from 'vue';
+import { ref, watch, onMounted, onUnmounted, computed, shallowRef } from 'vue';
 import { useI18n } from 'vue-i18n';
 import ThemeToggle from './components/ThemeToggle.vue';
-import Navigation from './components/Navigation.vue';
-import SeoManager from './components/SeoManager.vue';
+import DotNavigation from './components/DotNavigation.vue';
 import { setLanguage } from './i18n';
 import { applyLanguage, initializePreferences } from './utils/preferences';
 import ChatBot from './components/ChatBot.vue';
+import Home from './views/Home.vue';
+import About from './views/About.vue';
+import Skills from './views/Skills.vue';
+import Projects from './views/Projects.vue';
+import Contact from './views/Contact.vue';
 
 const { t, locale } = useI18n();
 const availableLocales = ['en', 'ar'];
@@ -15,10 +19,26 @@ const availableLocales = ['en', 'ar'];
 const currentLocale = computed(() => locale.value as string);
 
 // Custom cursor state
-const cursorPosition = ref({ x: 0, y: 0 });
 const cursorVisible = ref(false);
 const cursorEnlarged = ref(false);
 const isTouchDevice = ref(false);
+
+// Dynamic component management
+const currentSection = ref('Home');
+const currentComponent = shallowRef(Home);
+
+const components = {
+  Home,
+  About,
+  Skills,
+  Projects,
+  Contact
+};
+
+const changeSection = (sectionName: string) => {
+  currentSection.value = sectionName;
+  currentComponent.value = components[sectionName as keyof typeof components];
+};
 
 // Function to switch language and store preference
 const toggleLanguage = () => {
@@ -38,9 +58,20 @@ watch(
 
 // Custom cursor functions
 const onMouseMove = (e: MouseEvent) => {
-  cursorPosition.value = { x: e.clientX, y: e.clientY };
-  if (!cursorVisible.value) {
-    cursorVisible.value = true;
+  const x = e.clientX;
+  const y = e.clientY;
+  const transform = `translate(${x}px, ${y}px)`;
+  
+  // Update cursor elements directly for smoother movement
+  const dot = document.querySelector('.cursor-dot') as HTMLElement;
+  const outline = document.querySelector('.cursor-outline') as HTMLElement;
+  
+  if (dot && outline) {
+    dot.style.transform = transform;
+    outline.style.transform = transform;
+    if (!cursorVisible.value) {
+      cursorVisible.value = true;
+    }
   }
 };
 
@@ -119,26 +150,18 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div :class="{ 'rtl': currentLocale === 'ar' }" class="min-h-screen bg-gray-100 dark:bg-[var(--dark-bg)] text-gray-800 dark:text-gray-200 transition-colors duration-200">
+  <div :class="{ 'rtl': currentLocale === 'ar' }" class="min-h-screen bg-gray-100 dark:bg-[#011627] text-gray-800 dark:text-gray-200 transition-colors duration-200">
     <!-- Custom cursor (only shown on non-touch devices) -->
     <template v-if="!isTouchDevice">
       <div 
         class="cursor-dot" 
         :class="{ 'cursor-visible': cursorVisible }"
-        :style="{ 
-          left: `${cursorPosition.x}px`, 
-          top: `${cursorPosition.y}px` 
-        }"
       ></div>
       <div 
         class="cursor-outline" 
         :class="{ 
           'cursor-visible': cursorVisible, 
           'cursor-enlarged': cursorEnlarged 
-        }"
-        :style="{ 
-          left: `${cursorPosition.x}px`, 
-          top: `${cursorPosition.y}px` 
         }"
       ></div>
       <div 
@@ -147,26 +170,22 @@ onUnmounted(() => {
         class="cursor-trail" 
         :class="{ 'cursor-visible': cursorVisible }"
         :style="{ 
-          left: `${cursorPosition.x}px`, 
-          top: `${cursorPosition.y}px`,
           animationDelay: `${i * 0.05}s`
         }"
       ></div>
     </template>
     
-    <SeoManager />
-    <Navigation />
+    <DotNavigation @section-change="changeSection" />
+    <ChatBot @section-change="changeSection" />
     
     <main class="container mx-auto px-4 py-8 min-h-[calc(100vh-12rem)] overflow-hidden">
-      <router-view v-slot="{ Component, route }">
-        <transition 
-          :name="currentLocale === 'ar' ? 'slide-rtl' : 'slide-ltr'" 
-          mode="out-in"
-          appear
-        >
-          <component :is="Component" :key="route.path" />
-        </transition>
-      </router-view>
+      <transition 
+        :name="currentLocale === 'ar' ? 'slide-rtl' : 'slide-ltr'" 
+        mode="out-in"
+        appear
+      >
+        <component :is="currentComponent" :key="currentSection" />
+      </transition>
     </main>
 
     <footer class="bg-white dark:bg-[#011627] text-gray-700 dark:text-[#a9b7c6] border-t border-gray-200 dark:border-gray-700 py-6 mt-auto shadow-sm">
@@ -213,127 +232,51 @@ onUnmounted(() => {
               </a>
             </div>
           </div>
-          <p class="text-gray-600 dark:text-gray-400 mb-4 md:mb-0">
-            &copy; {{ new Date().getFullYear() }} {{ t('footer.copyright') }}. {{ t('footer.language') }}: {{ currentLocale.toUpperCase() }}
-          </p>
+          
+          <div class="flex items-center space-x-4 rtl:space-x-reverse">
+            <ThemeToggle />
+            <button 
+              @click="toggleLanguage"
+              class="px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+            >
+              {{ currentLocale === 'en' ? 'العربية' : 'English' }}
+            </button>
+          </div>
         </div>
       </div>
     </footer>
-    <ChatBot />
   </div>
 </template>
 
 <style>
 .rtl {
   direction: rtl;
-  text-align: right;
-}
-
-/* Custom dark mode colors */
-.dark {
-  --dark-bg: #011627;
-  --dark-card: #01223d;
-  --dark-btn-primary: #01223d;
-  --dark-btn-primary-hover: #012e52;
-  --dark-btn-secondary: #011627;
-  --dark-btn-secondary-hover: #01223d;
-}
-
-/* Global styles */
-.card {
-  @apply bg-white dark:bg-[var(--dark-card)] rounded-lg shadow-md p-6 transition-colors duration-200 border border-gray-200 dark:border-gray-700;
-}
-
-.btn {
-  @apply px-4 py-2 rounded-md font-medium transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2;
-}
-
-.btn-primary {
-  @apply bg-violet-600 text-white hover:bg-violet-700 focus:ring-violet-700 dark:bg-[var(--dark-btn-primary)] dark:text-white dark:hover:bg-[var(--dark-btn-primary-hover)] dark:focus:ring-blue-700;
-}
-
-.btn-secondary {
-  @apply bg-gray-200 text-gray-800 hover:bg-gray-300 focus:ring-gray-400 dark:bg-[var(--dark-btn-secondary)] dark:text-gray-200 dark:hover:bg-[var(--dark-btn-secondary-hover)] dark:focus:ring-gray-700;
-}
-
-/* Route transitions */
-.slide-ltr-enter-active,
-.slide-ltr-leave-active,
-.slide-rtl-enter-active,
-.slide-rtl-leave-active {
-  transition: all 0.35s ease-out;
-}
-
-.slide-ltr-enter-from {
-  opacity: 0;
-  transform: translateX(-30px);
-}
-
-.slide-ltr-leave-to {
-  opacity: 0;
-  transform: translateX(30px);
-}
-
-.slide-rtl-enter-from {
-  opacity: 0;
-  transform: translateX(30px);
-}
-
-.slide-rtl-leave-to {
-  opacity: 0;
-  transform: translateX(-30px);
 }
 
 /* Custom cursor styles */
 .cursor-dot,
-.cursor-outline,
-.cursor-trail {
+.cursor-outline {
   pointer-events: none;
   position: fixed;
   z-index: 9999;
+  transform: translate(-50%, -50%);
   border-radius: 50%;
   opacity: 0;
-  transform: translate(-50%, -50%);
-  transition: opacity 0.3s ease;
-  will-change: transform, opacity;
+  transition: none;
+  will-change: transform;
 }
 
 .cursor-dot {
   width: 8px;
   height: 8px;
-  background-color: rgba(139, 92, 246, 0.9); /* Violet color with opacity */
-  box-shadow: 0 0 10px rgba(139, 92, 246, 0.6);
-}
-
-.dark .cursor-dot {
-  background-color: rgba(147, 197, 253, 0.9); /* Blue color with opacity for dark mode */
-  box-shadow: 0 0 10px rgba(147, 197, 253, 0.6);
+  background-color: #3b82f6;
 }
 
 .cursor-outline {
   width: 40px;
   height: 40px;
-  background-color: rgba(139, 92, 246, 0.15); /* Violet with low opacity */
-  transition: transform 0.2s ease, width 0.2s ease, height 0.2s ease, background-color 0.2s ease;
-  box-shadow: 0 0 15px rgba(139, 92, 246, 0.3);
-}
-
-.dark .cursor-outline {
-  background-color: rgba(147, 197, 253, 0.15); /* Blue with low opacity for dark mode */
-  box-shadow: 0 0 15px rgba(147, 197, 253, 0.3);
-}
-
-.cursor-trail {
-  width: 20px;
-  height: 20px;
-  background-color: rgba(139, 92, 246, 0.1); /* Violet with very low opacity */
-  animation: cursorTrailFade 0.5s ease forwards;
-  box-shadow: 0 0 8px rgba(139, 92, 246, 0.2);
-}
-
-.dark .cursor-trail {
-  background-color: rgba(147, 197, 253, 0.1); /* Blue with very low opacity for dark mode */
-  box-shadow: 0 0 8px rgba(147, 197, 253, 0.2);
+  border: 2px solid rgba(59, 130, 246, 0.5);
+  transition: transform 0.1s ease-out;
 }
 
 .cursor-visible {
@@ -342,78 +285,57 @@ onUnmounted(() => {
 
 .cursor-enlarged {
   transform: translate(-50%, -50%) scale(1.5);
-  background-color: rgba(139, 92, 246, 0.1); /* Violet with low opacity when enlarged */
 }
 
-.dark .cursor-enlarged {
-  background-color: rgba(147, 197, 253, 0.1); /* Blue with low opacity when enlarged for dark mode */
+.cursor-trail {
+  pointer-events: none;
+  position: fixed;
+  width: 4px;
+  height: 4px;
+  background-color: rgba(59, 130, 246, 0.3);
+  border-radius: 50%;
+  z-index: 9998;
+  transform: translate(-50%, -50%);
+  opacity: 0;
+  animation: trail-fade 1s linear forwards;
 }
 
-.cursor-outline.cursor-enlarged {
-  transform: translate(-50%, -50%) scale(1.5);
-}
-
-@keyframes cursorTrailFade {
+@keyframes trail-fade {
   0% {
     opacity: 0.5;
-    transform: translate(-50%, -50%) scale(0.8);
+    transform: translate(-50%, -50%) scale(1);
   }
   100% {
     opacity: 0;
-    transform: translate(-50%, -50%) scale(0.3);
+    transform: translate(-50%, -50%) scale(0.1);
   }
 }
 
-/* Card styles */
-.card {
-  @apply bg-white dark:bg-[var(--dark-card)] rounded-lg shadow-md p-6 transition-colors duration-200 border border-gray-200 dark:border-gray-700;
+/* Slide transitions */
+.slide-ltr-enter-active,
+.slide-ltr-leave-active,
+.slide-rtl-enter-active,
+.slide-rtl-leave-active {
+  transition: all 0.3s ease-out;
 }
 
-/* Text selection styles */
-::selection {
-  background-color: rgba(203, 213, 225, 0.6); /* Light grey with opacity */
-  color: inherit;
+.slide-ltr-enter-from {
+  opacity: 0;
+  transform: translateX(-20px);
 }
 
-.dark ::selection {
-  background-color: rgba(71, 85, 105, 0.6); /* Darker grey for dark mode */
-  color: inherit;
+.slide-ltr-leave-to {
+  opacity: 0;
+  transform: translateX(20px);
 }
 
-/* Reduced motion preferences */
-@media (prefers-reduced-motion: reduce) {
-  .cursor-trail {
-    display: none;
-  }
-  
-  .slide-ltr-enter-active,
-  .slide-ltr-leave-active,
-  .slide-rtl-enter-active,
-  .slide-rtl-leave-active {
-    transition: opacity 0.3s ease-out;
-    transform: none;
-  }
-  
-  .slide-ltr-enter-from,
-  .slide-rtl-enter-from {
-    opacity: 0;
-    transform: none;
-  }
-  
-  .slide-ltr-leave-to,
-  .slide-rtl-leave-to {
-    opacity: 0;
-    transform: none;
-  }
-  
-  .cursor-dot,
-  .cursor-outline {
-    transition: opacity 0.3s ease;
-    transform: translate(-50%, -50%);
-  }
-  
-  .cursor-enlarged {
-    transform: translate(-50%, -50%);
-  }
+.slide-rtl-enter-from {
+  opacity: 0;
+  transform: translateX(20px);
+}
+
+.slide-rtl-leave-to {
+  opacity: 0;
+  transform: translateX(-20px);
 }
 </style>

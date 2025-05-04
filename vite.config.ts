@@ -8,5 +8,13 @@ export default defineConfig({
     alias: {
       '@': '/src'
     }
+  },
+  server: {
+    host: true,
+    port: 5173,
+    hmr: {
+      protocol: 'ws',
+      host: 'localhost'
+    }
   }
 })

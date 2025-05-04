@@ -80,10 +80,9 @@
 <script setup lang="ts">
 import { ref, watch, nextTick } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { useRouter } from 'vue-router';
 
 const { t } = useI18n();
-const router = useRouter();
+const emit = defineEmits(['section-change']);
 
 // Chat state
 const isChatOpen = ref(false);
@@ -99,24 +98,23 @@ const isAnimating = ref(false);
 
 // Toggle chat window
 const toggleChat = () => {
-  // Trigger animation
+  isChatOpen.value = !isChatOpen.value;
   isAnimating.value = true;
+  
+  if (isChatOpen.value && messages.value.length === 0) {
+    // Add welcome message with quick reply options
+    addBotMessage(t('chatbot.welcome'), [
+      { text: t('chatbot.options.projects'), value: 'projects', action: 'navigateTo', params: { section: 'Projects' } },
+      { text: t('chatbot.options.skills'), value: 'skills', action: 'navigateTo', params: { section: 'Skills' } },
+      { text: t('chatbot.options.contact'), value: 'contact', action: 'navigateTo', params: { section: 'Contact' } },
+      { text: t('chatbot.options.help'), value: 'help', action: 'showHelp' }
+    ]);
+  }
+  
+  // Reset animation after delay
   setTimeout(() => {
     isAnimating.value = false;
   }, 1000);
-  
-  // Toggle chat window
-  isChatOpen.value = !isChatOpen.value;
-  
-  // If opening chat and no messages yet, show welcome message
-  if (isChatOpen.value && messages.value.length === 0) {
-    addBotMessage(t('chatbot.welcome'), [
-      { text: t('chatbot.options.projects'), value: 'projects', action: 'showProjects' },
-      { text: t('chatbot.options.skills'), value: 'skills', action: 'showSkills' },
-      { text: t('chatbot.options.contact'), value: 'contact', action: 'showContact' },
-      { text: t('chatbot.options.notInterested'), value: 'not-interested', action: 'notInterested' }
-    ]);
-  }
 };
 
 // Send user message
@@ -146,22 +144,22 @@ const processUserMessage = (text: string) => {
   // Simple keyword matching
   if (lowerText.includes('project') || lowerText.includes('work') || lowerText.includes('portfolio')) {
     addBotMessage(t('chatbot.responses.projects'), [
-      { text: t('chatbot.options.viewProjects'), value: 'view-projects', action: 'navigateTo', params: { path: '/projects' } },
+      { text: t('chatbot.options.viewProjects'), value: 'view-projects', action: 'navigateTo', params: { section: 'Projects' } },
       { text: t('chatbot.options.notInterested'), value: 'not-interested', action: 'notInterested' }
     ]);
   } else if (lowerText.includes('skill') || lowerText.includes('tech') || lowerText.includes('know')) {
     addBotMessage(t('chatbot.responses.skills'), [
-      { text: t('chatbot.options.viewSkills'), value: 'view-skills', action: 'navigateTo', params: { path: '/skills' } },
+      { text: t('chatbot.options.viewSkills'), value: 'view-skills', action: 'navigateTo', params: { section: 'Skills' } },
       { text: t('chatbot.options.notInterested'), value: 'not-interested', action: 'notInterested' }
     ]);
   } else if (lowerText.includes('contact') || lowerText.includes('email') || lowerText.includes('reach') || lowerText.includes('hire')) {
     addBotMessage(t('chatbot.responses.contact'), [
-      { text: t('chatbot.options.contactForm'), value: 'contact-form', action: 'scrollToContactForm' },
+      { text: t('chatbot.options.contactForm'), value: 'contact-form', action: 'navigateTo', params: { section: 'Contact' } },
       { text: t('chatbot.options.notInterested'), value: 'not-interested', action: 'notInterested' }
     ]);
   } else if (lowerText.includes('about') || lowerText.includes('who') || lowerText.includes('experience')) {
     addBotMessage(t('chatbot.responses.about'), [
-      { text: t('chatbot.options.viewAbout'), value: 'view-about', action: 'navigateTo', params: { path: '/about' } },
+      { text: t('chatbot.options.viewAbout'), value: 'view-about', action: 'navigateTo', params: { section: 'About' } },
       { text: t('chatbot.options.notInterested'), value: 'not-interested', action: 'notInterested' }
     ]);
   } else if (lowerText.includes('hello') || lowerText.includes('hi') || lowerText.includes('hey')) {
@@ -176,9 +174,9 @@ const processUserMessage = (text: string) => {
   } else {
     // Default response
     addBotMessage(t('chatbot.responses.default'), [
-      { text: t('chatbot.options.projects'), value: 'projects', action: 'showProjects' },
-      { text: t('chatbot.options.skills'), value: 'skills', action: 'showSkills' },
-      { text: t('chatbot.options.contact'), value: 'contact', action: 'showContact' },
+      { text: t('chatbot.options.projects'), value: 'projects', action: 'navigateTo', params: { section: 'Projects' } },
+      { text: t('chatbot.options.skills'), value: 'skills', action: 'navigateTo', params: { section: 'Skills' } },
+      { text: t('chatbot.options.contact'), value: 'contact', action: 'navigateTo', params: { section: 'Contact' } },
       { text: t('chatbot.options.notInterested'), value: 'not-interested', action: 'notInterested' }
     ]);
   }
@@ -199,54 +197,39 @@ const handleOptionClick = (option: { text: string, value: string, action?: strin
   if (option.action) {
     switch (option.action) {
       case 'navigateTo':
-        if (option.params?.path) {
+        if (option.params?.section) {
           isChatOpen.value = false;
-          router.push(option.params.path);
+          emit('section-change', option.params.section);
         }
         break;
       case 'scrollToContactForm':
         isChatOpen.value = false;
-        
-        // Check if we're on the contact page, if not navigate there first
-        const currentPath = router.currentRoute.value.path;
-        if (currentPath !== '/contact') {
-          // Store in session storage that we want to scroll to contact form after navigation
-          sessionStorage.setItem('scrollToContactForm', 'true');
-          // Navigate to contact page
-          router.push('/contact');
-        } else {
-          // We're already on the contact page, just scroll to the form
-          setTimeout(() => {
-            const contactForm = document.querySelector('form[name="contact"]');
-            if (contactForm) {
-              contactForm.scrollIntoView({ behavior: 'smooth' });
-            }
-          }, 300);
-        }
+        emit('section-change', 'Contact');
+        // We'll handle the scroll in the Contact component
         break;
       case 'showProjects':
         addBotMessage(t('chatbot.responses.projectsInfo'), [
-          { text: t('chatbot.options.viewProjects'), value: 'view-projects', action: 'navigateTo', params: { path: '/projects' } },
+          { text: t('chatbot.options.viewProjects'), value: 'view-projects', action: 'navigateTo', params: { section: 'Projects' } },
           { text: t('chatbot.options.notInterested'), value: 'not-interested', action: 'notInterested' }
         ]);
         break;
       case 'showSkills':
         addBotMessage(t('chatbot.responses.skillsInfo'), [
-          { text: t('chatbot.options.viewSkills'), value: 'view-skills', action: 'navigateTo', params: { path: '/skills' } },
+          { text: t('chatbot.options.viewSkills'), value: 'view-skills', action: 'navigateTo', params: { section: 'Skills' } },
           { text: t('chatbot.options.notInterested'), value: 'not-interested', action: 'notInterested' }
         ]);
         break;
       case 'showContact':
         addBotMessage(t('chatbot.responses.contactInfo'), [
-          { text: t('chatbot.options.contactForm'), value: 'contact-form', action: 'scrollToContactForm' },
+          { text: t('chatbot.options.contactForm'), value: 'contact-form', action: 'navigateTo', params: { section: 'Contact' } },
           { text: t('chatbot.options.notInterested'), value: 'not-interested', action: 'notInterested' }
         ]);
         break;
       case 'showHelp':
         addBotMessage(t('chatbot.responses.help'), [
-          { text: t('chatbot.options.projects'), value: 'projects', action: 'showProjects' },
-          { text: t('chatbot.options.skills'), value: 'skills', action: 'showSkills' },
-          { text: t('chatbot.options.contact'), value: 'contact', action: 'showContact' },
+          { text: t('chatbot.options.projects'), value: 'projects', action: 'navigateTo', params: { section: 'Projects' } },
+          { text: t('chatbot.options.skills'), value: 'skills', action: 'navigateTo', params: { section: 'Skills' } },
+          { text: t('chatbot.options.contact'), value: 'contact', action: 'navigateTo', params: { section: 'Contact' } },
           { text: t('chatbot.options.notInterested'), value: 'not-interested', action: 'notInterested' }
         ]);
         break;
@@ -290,9 +273,9 @@ watch(() => t('chatbot.welcome'), (newVal, oldVal) => {
       // Also update options if they exist
       if (messages.value[welcomeMessageIndex].options) {
         messages.value[welcomeMessageIndex].options = [
-          { text: t('chatbot.options.projects'), value: 'projects', action: 'showProjects' },
-          { text: t('chatbot.options.skills'), value: 'skills', action: 'showSkills' },
-          { text: t('chatbot.options.contact'), value: 'contact', action: 'showContact' },
+          { text: t('chatbot.options.projects'), value: 'projects', action: 'navigateTo', params: { section: 'Projects' } },
+          { text: t('chatbot.options.skills'), value: 'skills', action: 'navigateTo', params: { section: 'Skills' } },
+          { text: t('chatbot.options.contact'), value: 'contact', action: 'navigateTo', params: { section: 'Contact' } },
           { text: t('chatbot.options.notInterested'), value: 'not-interested', action: 'notInterested' }
         ];
       }
